@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "yurekligolf-fe": {
+        "yurekligold-fe": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
@@ -17,7 +17,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:application",
                     "options": {
-                        "outputPath": "dist/yurekligolf-fe",
+                        "outputPath": "dist/yurekligold-fe",
                         "index": "src/index.html",
                         "browser": "src/main.ts",
                         "tsConfig": "tsconfig.app.json",
@@ -62,10 +62,10 @@
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "configurations": {
                         "production": {
-                            "buildTarget": "yurekligolf-fe:build:production"
+                            "buildTarget": "yurekligold-fe:build:production"
                         },
                         "development": {
-                            "buildTarget": "yurekligolf-fe:build:development"
+                            "buildTarget": "yurekligold-fe:build:development"
                         }
                     },
                     "defaultConfiguration": "development"
