@@ -1,0 +1,29 @@
+<div class="flex flex-col gap-6">
+    <div>
+        <span class="text-muted-color">Kuyumcu / Tamir İşlemleri</span>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div><h1 class="text-3xl font-semibold mt-2 mb-0">Tamir İşlemleri</h1><p class="text-muted-color mt-2 mb-0">Tamir kabulünü başlatın, işçilik ekleyin ve tamamlandığında teslim sürecini yönetin.</p></div>
+            <p-button label="Tamir başlat" icon="pi pi-wrench" (onClick)="openNew()" />
+        </div>
+    </div>
+    <div class="grid grid-cols-12 gap-6">
+        <div class="col-span-12 sm:col-span-4"><div class="card"><span class="text-muted-color">Açık tamirler</span><div class="text-3xl font-semibold mt-3">{{ openCount }}</div><span class="text-orange-500 text-sm">Tamamlanmayı bekliyor</span></div></div>
+        <div class="col-span-12 sm:col-span-4"><div class="card"><span class="text-muted-color">Bugün başlatılan</span><div class="text-3xl font-semibold mt-3">{{ todayCount }}</div><span class="text-primary text-sm">Yeni tamir kabulü</span></div></div>
+        <div class="col-span-12 sm:col-span-4"><div class="card"><span class="text-muted-color">Toplam işçilik</span><div class="text-3xl font-semibold mt-3">{{ totalLabor | number: '1.2-2' }} TL</div><span class="text-green-500 text-sm">Açık işlemler</span></div></div>
+    </div>
+    <div class="card">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4"><div><h2 class="text-xl font-semibold m-0">Tamir kayıtları</h2><span class="text-muted-color text-sm">İşlem seçerek detaylarını görüntüleyin.</span></div><input pInputText placeholder="Müşteri veya ürün ara..." (input)="filter($event)" /></div>
+        <p-table [value]="visibleRepairs" [paginator]="true" [rows]="8" [responsiveLayout]="'scroll'">
+            <ng-template #header><tr><th>Fiş No</th><th>Müşteri</th><th>Ürün</th><th>Başlangıç</th><th>İşçilik</th><th>Durum</th><th style="width: 12rem"></th></tr></ng-template>
+            <ng-template #body let-repair><tr><td class="font-semibold">TMR-{{ repair.id }}</td><td><span class="font-semibold">{{ repair.customer }}</span><small class="block text-muted-color">Getiren: {{ repair.broughtBy }}</small></td><td>{{ repair.product }}</td><td>{{ repair.createdAt }}</td><td>{{ laborTotal(repair) | number: '1.2-2' }} TL</td><td><p-tag [value]="repair.status" [severity]="repair.status === 'Başladı' ? 'warn' : 'success'" /></td><td><p-button icon="pi pi-eye" label="Detay" text (onClick)="edit(repair)" /> @if (repair.status === 'Başladı') { <p-button icon="pi pi-check" text severity="success" (onClick)="complete(repair)" /> }</td></tr></ng-template>
+            <ng-template #emptymessage><tr><td colspan="7" class="text-center p-6 text-muted-color">Tamir kaydı bulunamadı.</td></tr></ng-template>
+        </p-table>
+    </div>
+</div>
+
+<app-repair-dialog
+    [(visible)]="dialogVisible"
+    [editingId]="editingId"
+    [draft]="draft"
+    (saveRepair)="saveRepair($event)"
+/>

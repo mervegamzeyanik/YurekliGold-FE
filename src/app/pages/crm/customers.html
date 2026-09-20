@@ -1,0 +1,96 @@
+<div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-2">
+        <span class="text-muted-color">CRM / Müşteri Bilgileri</span>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div><h1 class="text-3xl font-semibold m-0">Müşteri Bilgileri</h1><p class="text-muted-color mt-2 mb-0">Müşterilerin iletişim, vergi ve cari hesap bilgilerini yönetin.</p></div>
+            <p-button label="Müşteri ekle" icon="pi pi-plus" (onClick)="openNew()" />
+        </div>
+    </div>
+    @if (!selectedCustomer) {
+        <div class="card">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4"><div><span class="text-muted-color">Müşteri listesi</span><h2 class="text-xl font-semibold mt-1 mb-0">{{ filteredCustomers.length }} kayıt</h2></div><input pInputText type="text" placeholder="Müşteri ara..." class="w-full md:w-72" (input)="filter($event)" /></div>
+            <p-table [value]="filteredCustomers" [paginator]="true" [rows]="8" [responsiveLayout]="'scroll'" dataKey="id">
+                <ng-template #header><tr><th style="width: 3rem">#</th><th>Müşterinin adı</th><th>Telefon</th><th class="text-right">Borç</th><th>Durum</th><th></th></tr></ng-template>
+                <ng-template #body let-customer let-rowIndex="rowIndex"><tr><td>{{ rowIndex + 1 }}</td><td><span class="font-semibold">{{ customer.name }}</span></td><td>{{ customer.mobilePhone || customer.workPhone || '-' }}</td><td class="text-right font-semibold">{{ customer.debt | number: '1.2-2' }} TL</td><td><p-tag [value]="customer.status" [severity]="customer.status === 'Aktif' ? 'success' : 'secondary'" /></td><td><p-button label="Detay" icon="pi pi-arrow-right" text (onClick)="selectCustomer(customer)" /></td></tr></ng-template>
+                <ng-template #emptymessage><tr><td colspan="6" class="text-center p-6 text-muted-color">Müşteri bulunamadı.</td></tr></ng-template>
+            </p-table>
+            <div class="flex justify-end mt-5 pt-4 border-t border-surface"><span class="font-semibold">Tüm müşterilerin veresiye toplamı</span><span class="ml-4 px-4 py-2 bg-primary/10 text-primary font-bold rounded-border">{{ totalDebt | number: '1.2-2' }} TL</span></div>
+        </div>
+    } @else {
+        <div class="flex items-center gap-3"><p-button icon="pi pi-arrow-left" label="Müşteri listesine dön" text (onClick)="backToList()" /></div>
+        <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-12 xl:col-span-8">
+                <div class="card">
+                    <div class="flex items-center justify-between mb-4"><div><span class="text-muted-color">Müşteri detayı</span><h2 class="text-xl font-semibold mt-1 mb-0">{{ selectedCustomer.name }}</h2></div><p-button label="Bilgileri düzenle" icon="pi pi-pencil" outlined (onClick)="edit(selectedCustomer)" /></div>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5"><div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Toplam borç</span><strong class="text-orange-500">{{ selectedCustomer.debt | number: '1.2-2' }} TL</strong></div><div class="p-3 rounded-border bg-yellow-50 dark:bg-yellow-400/10"><span class="block text-muted-color text-sm">Altın borcu</span><strong class="text-yellow-700">{{ selectedCustomer.goldDebtGrams | number: '1.3-3' }} gr</strong></div><div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Kalan taksit</span><strong>{{ selectedCustomer.installmentTotal | number: '1.2-2' }} TL</strong></div><div class="p-3 rounded-border bg-orange-50 dark:bg-orange-400/10"><span class="block text-muted-color text-sm">İşçilik toplamı</span><strong>{{ selectedLaborTotal | number: '1.2-2' }} TL</strong></div><div class="p-3 rounded-border bg-yellow-50 dark:bg-yellow-400/10"><span class="block text-muted-color text-sm">Maden toplamı</span><strong>{{ selectedMetalTotal | number: '1.3-3' }} gr</strong></div></div>
+                    <div class="flex flex-col gap-2 text-sm text-muted-color"><span><i class="pi pi-phone mr-2"></i>{{ selectedCustomer.mobilePhone || selectedCustomer.workPhone || 'Telefon bilgisi yok' }}</span><span><i class="pi pi-envelope mr-2"></i>{{ selectedCustomer.email || 'E-posta bilgisi yok' }}</span><span><i class="pi pi-map-marker mr-2"></i>{{ selectedCustomer.address || 'Adres bilgisi yok' }}</span></div>
+                </div>
+            </div>
+            <div class="col-span-12 xl:col-span-4">
+                <div class="card h-full">
+                    <div class="flex items-center justify-between mb-4"><div><span class="text-muted-color">Tamir geçmişi</span><h2 class="text-xl font-semibold mt-1 mb-0">{{ selectedRepairs.length }} işlem</h2></div><i class="pi pi-wrench text-2xl text-primary"></i></div>
+                    <div class="grid grid-cols-2 gap-3 mb-5"><div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Belirlenen limit</span><strong>{{ selectedCustomer.creditLimit | number: '1.2-2' }} TL</strong></div><div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Toplam borç</span><strong class="text-orange-500">{{ selectedCustomer.debt | number: '1.2-2' }} TL</strong></div><div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Veresiye toplamı</span><strong>{{ selectedCustomer.debt | number: '1.2-2' }} TL</strong></div><div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Kalan taksit</span><strong>{{ selectedCustomer.installmentTotal | number: '1.2-2' }} TL</strong></div></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5"><p-button label="Borç detayı" icon="pi pi-book" outlined (onClick)="openDebtDetails()" /><p-button label="Borç ekle" icon="pi pi-plus-circle" severity="warn" (onClick)="openManualDebt()" /><p-button label="Tahsilat al" icon="pi pi-wallet" severity="success" (onClick)="openCustomerCollection()" [disabled]="selectedCustomer.debt <= 0 && selectedCustomer.goldDebtGrams <= 0" /></div>
+                    <div class="border-t border-surface pt-4"><div class="flex items-center justify-between mb-3"><h3 class="font-semibold m-0">Önceki tamir işlemleri</h3><span class="text-muted-color text-sm">{{ selectedRepairs.length }} kayıt</span></div>
+                        @if (selectedRepairs.length) {<div class="flex flex-col gap-2">@for (repair of selectedRepairs; track repair.id) {<button type="button" class="text-left flex items-center justify-between gap-3 p-3 rounded-border border border-surface hover:border-primary hover:bg-primary/5 transition-colors" (click)="openRepairDetails(repair)"><span><strong class="block">{{ repair.product }}</strong><small class="text-muted-color">{{ repair.date }} · TMR-{{ repair.id }}</small></span><span class="text-right"><p-tag [value]="repair.status" [severity]="repair.status === 'Tamamlandı' ? 'success' : 'warn'" /><i class="pi pi-angle-right ml-2 text-muted-color"></i></span></button>}</div>} @else {<p class="text-muted-color text-sm mb-0">Bu müşteriye ait tamamlanmış veya devam eden tamir bulunmuyor.</p>}
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<p-dialog [(visible)]="dialogVisible" [modal]="true" [draggable]="false" [style]="{ width: 'min(58rem, 95vw)' }" [header]="editingId === null ? 'Müşteri ekle' : 'Müşteri bilgilerini düzenle'">
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12 md:col-span-6"><label for="name" class="block font-medium mb-2">Adı soyadı / Firma adı *</label><input id="name" pInputText class="w-full" [(ngModel)]="draft.name" /></div><div class="col-span-12 md:col-span-6"><label for="email" class="block font-medium mb-2">E-posta</label><input id="email" pInputText class="w-full" [(ngModel)]="draft.email" /></div>
+        <div class="col-span-12 md:col-span-6"><label for="mobilePhone" class="block font-medium mb-2">GSM telefonu</label><input id="mobilePhone" pInputText class="w-full" [(ngModel)]="draft.mobilePhone" /></div><div class="col-span-12 md:col-span-6"><label for="workPhone" class="block font-medium mb-2">İş telefonu</label><input id="workPhone" pInputText class="w-full" [(ngModel)]="draft.workPhone" /></div>
+        <div class="col-span-12 md:col-span-6"><label for="taxNumber" class="block font-medium mb-2">Vergi numarası</label><input id="taxNumber" pInputText class="w-full" [(ngModel)]="draft.taxNumber" /></div>
+        <div class="col-span-12"><label for="address" class="block font-medium mb-2">Adres</label><textarea id="address" pTextarea class="w-full" rows="2" [(ngModel)]="draft.address"></textarea></div><div class="col-span-12 md:col-span-4"><label for="creditLimit" class="block font-medium mb-2">Belirlenen limit</label><p-inputnumber inputId="creditLimit" class="w-full" [(ngModel)]="draft.creditLimit" mode="currency" currency="TRY" locale="tr-TR" /></div><div class="col-span-12 md:col-span-4"><label for="installmentTotal" class="block font-medium mb-2">Kalan taksit toplamı</label><p-inputnumber inputId="installmentTotal" class="w-full" [(ngModel)]="draft.installmentTotal" mode="currency" currency="TRY" locale="tr-TR" /></div>
+        <div class="col-span-12"><label for="notes" class="block font-medium mb-2">Özel notlar</label><textarea id="notes" pTextarea class="w-full" rows="3" [(ngModel)]="draft.notes"></textarea></div>
+    </div>
+    <ng-template #footer><p-button label="Vazgeç" text (onClick)="dialogVisible = false" /><p-button label="Kaydet" icon="pi pi-check" (onClick)="save()" /></ng-template>
+</p-dialog>
+<p-dialog [(visible)]="debtDialogVisible" [modal]="true" [draggable]="false" [style]="{ width: 'min(52rem, 95vw)' }" header="Borç detayı">
+    <div class="flex items-center justify-between mb-4"><div><span class="text-muted-color">Cari hesap</span><h2 class="text-xl font-semibold mt-1 mb-0">{{ selectedCustomer?.name }}</h2></div><div class="text-right"><strong class="block text-xl text-orange-500">{{ selectedCustomer?.debt | number: '1.2-2' }} TL</strong><span class="text-sm text-yellow-700">{{ selectedCustomer?.goldDebtGrams | number: '1.3-3' }} gr altın</span></div></div>
+    <p-table [value]="selectedDebtTransactions" [responsiveLayout]="'scroll'"><ng-template #header><tr><th>Tarih</th><th>Açıklama</th><th>İşlem</th><th class="text-right">Tutar</th></tr></ng-template><ng-template #body let-transaction><tr><td>{{ transaction.date }}</td><td>{{ transaction.description }}</td><td><p-tag [value]="transaction.type" [severity]="transaction.type === 'Borç' ? 'danger' : 'success'" /></td><td class="text-right font-semibold">@if (transaction.amount) { {{ transaction.amount | number: '1.2-2' }} TL } @if (transaction.goldGrams) { <span class="text-yellow-700">{{ transaction.goldGrams | number: '1.3-3' }} gr altın</span> }</td></tr></ng-template><ng-template #emptymessage><tr><td colspan="4" class="text-center p-5 text-muted-color">Borç hareketi bulunmuyor.</td></tr></ng-template></p-table>
+</p-dialog>
+<p-dialog [(visible)]="customerCollectionDialogVisible" [modal]="true" [draggable]="false" [style]="{ width: 'min(34rem, 95vw)' }" header="Müşteri tahsilatı">
+    @if (selectedCustomer) {
+        <div class="flex flex-col gap-4">
+            <div><span class="text-muted-color">Tahsilat yapılacak müşteri</span><h3 class="text-xl font-semibold mt-1 mb-0">{{ selectedCustomer.name }}</h3></div>
+            <div class="grid grid-cols-2 gap-3"><div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-sm text-muted-color">TL borcu</span><strong>{{ selectedCustomer.debt | number: '1.2-2' }} TL</strong></div><div class="p-3 rounded-border bg-yellow-50 dark:bg-yellow-400/10"><span class="block text-sm text-muted-color">Altın borcu</span><strong>{{ selectedCustomer.goldDebtGrams | number: '1.3-3' }} gr</strong></div></div>
+            <div><label class="block font-medium mb-2" for="collectionType">Tahsilat türü</label><p-select inputId="collectionType" class="w-full" [options]="collectionTypes" [(ngModel)]="customerCollectionType" /></div>
+            @if (customerCollectionType === 'Nakit') {
+                <div><label class="block font-medium mb-2" for="customerCollectionAmount">Nakit tahsilat tutarı</label><p-inputnumber inputId="customerCollectionAmount" class="w-full" [(ngModel)]="customerCollectionAmount" mode="currency" currency="TRY" locale="tr-TR" /></div>
+            } @else {
+                <div><label class="block font-medium mb-2" for="customerCollectionGoldGrams">Tahsil edilen altın</label><p-inputnumber inputId="customerCollectionGoldGrams" class="w-full" [(ngModel)]="customerCollectionGoldGrams" [min]="0.001" [minFractionDigits]="3" [maxFractionDigits]="3" suffix=" gr" /></div>
+            }
+        </div>
+    }
+    <ng-template #footer><p-button label="Vazgeç" text (onClick)="customerCollectionDialogVisible = false" /><p-button label="Tahsilatı kaydet" icon="pi pi-check" severity="success" (onClick)="collectCustomerDebt()" /></ng-template>
+</p-dialog>
+<p-dialog [(visible)]="manualDebtDialogVisible" [modal]="true" [draggable]="false" [style]="{ width: 'min(34rem, 95vw)' }" header="Manuel borç ekle">
+    @if (selectedCustomer) {
+        <div class="flex flex-col gap-4">
+            <div><span class="text-muted-color">Borç eklenecek müşteri</span><h3 class="text-xl font-semibold mt-1 mb-0">{{ selectedCustomer.name }}</h3></div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-sm text-muted-color">Mevcut TL borcu</span><strong>{{ selectedCustomer.debt | number: '1.2-2' }} TL</strong></div>
+                <div class="p-3 rounded-border bg-yellow-50 dark:bg-yellow-400/10"><span class="block text-sm text-muted-color">Mevcut altın borcu</span><strong>{{ selectedCustomer.goldDebtGrams | number: '1.3-3' }} gr</strong></div>
+            </div>
+            <div><label class="block font-medium mb-2" for="manualDebtType">Borç türü</label><p-select inputId="manualDebtType" class="w-full" [options]="collectionTypes" [(ngModel)]="manualDebtType" /></div>
+            @if (manualDebtType === 'Nakit') {
+                <div><label class="block font-medium mb-2" for="manualDebtAmount">Eklenecek TL borcu</label><p-inputnumber inputId="manualDebtAmount" class="w-full" [(ngModel)]="manualDebtAmount" mode="currency" currency="TRY" locale="tr-TR" /></div>
+            } @else {
+                <div><label class="block font-medium mb-2" for="manualDebtGoldGrams">Eklenecek altın</label><p-inputnumber inputId="manualDebtGoldGrams" class="w-full" [(ngModel)]="manualDebtGoldGrams" [min]="0.001" [minFractionDigits]="3" [maxFractionDigits]="3" suffix=" gr" /></div>
+            }
+        </div>
+    }
+    <ng-template #footer><p-button label="Vazgeç" text (onClick)="manualDebtDialogVisible = false" /><p-button label="Borcu kaydet" icon="pi pi-plus" severity="warn" (onClick)="addManualDebt()" /></ng-template>
+</p-dialog>
+<p-dialog [(visible)]="repairDialogVisible" [modal]="true" [draggable]="false" [style]="{ width: 'min(48rem, 95vw)' }" header="Tamir detayı">
+    @if (selectedRepair) {<div class="flex items-center justify-between mb-5"><div><span class="text-muted-color">TMR-{{ selectedRepair.id }}</span><h2 class="text-xl font-semibold mt-1 mb-0">{{ selectedRepair.product }}</h2><small class="text-muted-color">{{ selectedRepair.date }}</small></div><p-tag [value]="selectedRepair.status" [severity]="selectedRepair.status === 'Tamamlandı' ? 'success' : 'warn'" /></div><div class="grid grid-cols-2 gap-3 mb-5"><div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Yapılan işçilikler</span><strong>{{ selectedRepair.labors }}</strong></div><div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Kıymetli madenler</span><strong>{{ selectedRepair.metals || '-' }}</strong></div></div><div class="flex flex-wrap justify-between gap-4 pt-4 border-t border-surface"><span>İşçilik: <strong>{{ selectedRepair.laborTotal | number: '1.2-2' }} TL</strong></span><span>Maden: <strong>{{ selectedRepair.metalTotal | number: '1.3-3' }} gr</strong></span>@if (selectedRepair.status === 'Tamamlandı' && selectedRepair.collected < selectedRepair.laborTotal) {<p-button label="Bu tamirin tahsilatını yap" icon="pi pi-wallet" severity="warn" (onClick)="openCollection(selectedRepair)" />} @else if (selectedRepair.status === 'Tamamlandı') {<p-tag value="Tahsil edildi" severity="success" />}</div>}
+</p-dialog>
+<p-dialog [(visible)]="collectionDialogVisible" [modal]="true" [draggable]="false" [style]="{ width: 'min(32rem, 95vw)' }" header="Tamir tahsilatı">
+    @if (selectedRepair) {<div class="flex flex-col gap-4"><div><span class="text-muted-color">Tahsil edilecek işlem</span><h3 class="text-xl font-semibold mt-1 mb-0">{{ selectedRepair.product }} · TMR-{{ selectedRepair.id }}</h3></div><div class="flex justify-between p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span>Kalan tutar</span><strong>{{ selectedRepair.laborTotal - selectedRepair.collected | number: '1.2-2' }} TL</strong></div><div><label for="collectionAmount" class="block font-medium mb-2">Tahsilat tutarı</label><p-inputnumber inputId="collectionAmount" class="w-full" [(ngModel)]="collectionAmount" mode="currency" currency="TRY" locale="tr-TR" /></div></div>}
+    <ng-template #footer><p-button label="Vazgeç" text (onClick)="collectionDialogVisible = false" /><p-button label="Tahsilatı kaydet" icon="pi pi-check" severity="success" (onClick)="collectRepair()" /></ng-template>
+</p-dialog>

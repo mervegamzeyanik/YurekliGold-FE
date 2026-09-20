@@ -1,0 +1,45 @@
+<div class="flex flex-col gap-6">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div><span class="text-muted-color">CRM / Kullanıcı Tanımları</span><h1 class="text-3xl font-semibold mt-2 mb-0">Kullanıcı Tanımları</h1><p class="text-muted-color mt-2 mb-0">Ekip üyelerini, görevlerini, rollerini ve sistem yetkilerini yönetin.</p></div>
+        <p-button label="Yeni kullanıcı" icon="pi pi-user-plus" (onClick)="openNew()" />
+    </div>
+
+    <div class="grid grid-cols-12 gap-6">
+        <div class="col-span-12 sm:col-span-4"><div class="card"><span class="text-muted-color">Toplam kullanıcı</span><div class="text-3xl font-semibold mt-3">{{ users.length }}</div><span class="text-primary text-sm">Tanımlı ekip üyesi</span></div></div>
+        <div class="col-span-12 sm:col-span-4"><div class="card"><span class="text-muted-color">Aktif kullanıcı</span><div class="text-3xl font-semibold mt-3">{{ activeCount }}</div><span class="text-green-500 text-sm">Sisteme erişebilir</span></div></div>
+        <div class="col-span-12 sm:col-span-4"><div class="card"><span class="text-muted-color">Yönetici</span><div class="text-3xl font-semibold mt-3">{{ adminCount }}</div><span class="text-orange-500 text-sm">Geniş yetkili kullanıcı</span></div></div>
+    </div>
+
+    <div class="card">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+            <div><h2 class="text-xl font-semibold m-0">Sistem kullanıcıları</h2><span class="text-muted-color text-sm">{{ filteredUsers.length }} kayıt listeleniyor</span></div>
+            <input pInputText class="w-full md:w-80" placeholder="Ad, görev, rol veya e-posta ara..." (input)="filter($event)" />
+        </div>
+        <p-table [value]="filteredUsers" [paginator]="true" [rows]="8" [responsiveLayout]="'scroll'">
+            <ng-template #header><tr><th>Kullanıcı</th><th>Görev</th><th>Rol</th><th>İletişim</th><th>Yetkiler</th><th>Durum</th><th style="width: 8rem"></th></tr></ng-template>
+            <ng-template #body let-user>
+                <tr>
+                    <td><div class="flex items-center gap-3"><span class="flex items-center justify-center rounded-full bg-primary text-primary-contrast w-10 h-10">{{ initials(user.name) }}</span><div><span class="font-semibold block">{{ user.name }}</span><small class="text-muted-color">{{ user.email }}</small></div></div></td>
+                    <td>{{ user.task }}</td><td><p-tag [value]="user.role" [severity]="user.role === 'Yönetici' ? 'warn' : 'info'" /></td><td>{{ user.phone || '-' }}</td>
+                    <td><span class="text-sm">{{ user.permissions.length }} yetki</span></td>
+                    <td><p-tag [value]="user.status" [severity]="user.status === 'Aktif' ? 'success' : 'secondary'" /></td>
+                    <td><p-button icon="pi pi-pencil" text rounded (onClick)="edit(user)" /><p-button icon="pi pi-trash" text rounded severity="danger" (onClick)="remove(user)" /></td>
+                </tr>
+            </ng-template>
+            <ng-template #emptymessage><tr><td colspan="7" class="text-center p-6 text-muted-color">Kullanıcı bulunamadı.</td></tr></ng-template>
+        </p-table>
+    </div>
+</div>
+
+<p-dialog [(visible)]="dialogVisible" [modal]="true" [draggable]="false" [style]="{ width: 'min(52rem, 95vw)' }" [header]="editingId === null ? 'Yeni kullanıcı tanımla' : 'Kullanıcıyı düzenle'">
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12 md:col-span-6"><label for="name" class="block font-medium mb-2">Ad soyad *</label><input id="name" pInputText class="w-full" [(ngModel)]="draft.name" /></div>
+        <div class="col-span-12 md:col-span-6"><label for="email" class="block font-medium mb-2">E-posta *</label><input id="email" pInputText class="w-full" [(ngModel)]="draft.email" /></div>
+        <div class="col-span-12 md:col-span-6"><label for="phone" class="block font-medium mb-2">Telefon</label><input id="phone" pInputText class="w-full" [(ngModel)]="draft.phone" /></div>
+        <div class="col-span-12 md:col-span-6"><label for="task" class="block font-medium mb-2">Görev / pozisyon *</label><p-select inputId="task" class="w-full" [options]="tasks" [(ngModel)]="draft.task" /></div>
+        <div class="col-span-12 md:col-span-6"><label for="role" class="block font-medium mb-2">Rol *</label><p-select inputId="role" class="w-full" [options]="roles" [(ngModel)]="draft.role" /></div>
+        <div class="col-span-12 md:col-span-6"><label for="status" class="block font-medium mb-2">Durum</label><p-select inputId="status" class="w-full" [options]="statuses" [(ngModel)]="draft.status" /></div>
+        <div class="col-span-12"><span class="block font-medium mb-3">Sistem yetkileri</span><div class="grid grid-cols-1 sm:grid-cols-2 gap-3">@for (permission of availablePermissions; track permission) { <div class="flex items-center gap-2"><p-checkbox [inputId]="permission" [value]="permission" [(ngModel)]="draft.permissions" /><label [for]="permission">{{ permission }}</label></div> }</div></div>
+    </div>
+    <ng-template #footer><p-button label="Vazgeç" text (onClick)="dialogVisible = false" /><p-button label="Kaydet" icon="pi pi-check" (onClick)="save()" /></ng-template>
+</p-dialog>
