@@ -1,6 +1,6 @@
 html {
     height: 100%;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.2;
 }
 
@@ -25,24 +25,24 @@ a {
 
 /* Dense admin UI defaults: keep high-volume screens scannable. */
 .card {
-    padding: 1rem;
-    margin-bottom: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .p-button {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
 }
 
 .p-inputtext,
 .p-select,
 .p-inputnumber-input {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
 }
 
 .p-datatable .p-datatable-thead > tr > th,
 .p-datatable .p-datatable-tbody > tr > td {
-    padding: 0.55rem 0.65rem;
-    font-size: 0.875rem;
+    padding: 0.7rem 0.8rem;
+    font-size: 0.9rem;
 }
 
 .p-datatable .p-datatable-thead > tr > th {
@@ -52,25 +52,25 @@ a {
 }
 
 .p-tag {
-    font-size: 0.75rem;
-    padding: 0.2rem 0.45rem;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
 }
 
 .p-paginator {
-    padding: 0.35rem 0;
-    font-size: 0.8rem;
+    padding: 0.5rem 0;
+    font-size: 0.85rem;
 }
 
 .p-dialog .p-dialog-header {
-    padding: 0.85rem 1rem;
+    padding: 1rem 1.25rem;
 }
 
 .p-dialog .p-dialog-content {
-    padding: 0 1rem 1rem;
+    padding: 0 1.25rem 1.25rem;
 }
 
 .p-dialog .p-dialog-footer {
-    padding: 0.65rem 1rem;
+    padding: 0.75rem 1.25rem;
 }
 
 .compact-list-page .card,

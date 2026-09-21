@@ -1,4 +1,4 @@
-<div class="repair-list-page flex flex-col gap-4">
+<div class="repair-list-page flex flex-col gap-5">
     <div>
         <span class="text-muted-color">Kuyumcu / Tamir İşlemleri</span>
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -10,31 +10,31 @@
             <p-button label="Tamir başlat" icon="pi pi-wrench" (onClick)="openNewPage()" />
         </div>
     </div>
-    <div class="grid grid-cols-12 gap-3">
+    <div class="grid grid-cols-12 gap-4">
         <div class="col-span-12 sm:col-span-4">
             <div class="card">
                 <span class="text-muted-color">Açık tamirler</span>
-                <div class="text-2xl font-semibold mt-2">{{ openCount }}</div>
-                <span class="text-orange-500 text-xs">Bekleyen</span>
+                <div class="text-3xl font-semibold mt-3">{{ openCount }}</div>
+                <span class="text-orange-500 text-sm">Bekleyen</span>
             </div>
         </div>
         <div class="col-span-12 sm:col-span-4">
             <div class="card">
                 <span class="text-muted-color">Bugün başlatılan</span>
-                <div class="text-2xl font-semibold mt-2">{{ todayCount }}</div>
-                <span class="text-primary text-xs">Bugün</span>
+                <div class="text-3xl font-semibold mt-3">{{ todayCount }}</div>
+                <span class="text-primary text-sm">Bugün</span>
             </div>
         </div>
         <div class="col-span-12 sm:col-span-4">
             <div class="card">
                 <span class="text-muted-color">Toplam işçilik</span>
-                <div class="text-2xl font-semibold mt-2">{{ totalLabor | number: '1.2-2' }} TL</div>
-                <span class="text-green-500 text-xs">Açık işçilik</span>
+                <div class="text-3xl font-semibold mt-3">{{ totalLabor | number: '1.2-2' }} TL</div>
+                <span class="text-green-500 text-sm">Açık işçilik</span>
             </div>
         </div>
     </div>
     <div class="card">
-        <div class="flex flex-col gap-3 mb-3">
+        <div class="flex flex-col gap-4 mb-4">
             <div>
                 <h2 class="text-lg font-semibold m-0">Kayıtlar <span class="text-muted-color font-normal">({{ visibleRepairs.length }})</span></h2>
             </div>

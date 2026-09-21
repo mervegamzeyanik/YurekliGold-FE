@@ -34,8 +34,9 @@
         </div>
         <div class="col-span-12">
             <label class="block font-medium mb-2">Ürün / Takı ekle *</label>
+            <input pInputText class="w-full mb-2" placeholder="Ürün ara..." [(ngModel)]="productSearch" />
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                @for (product of productOptions; track product) {
+                @for (product of filteredProducts; track product) {
                 <button
                     type="button"
                     class="p-3 text-left rounded-border border border-surface hover:border-primary hover:bg-primary/5 transition-colors"
@@ -52,21 +53,28 @@
                     <span class="font-medium">Seçilen ürünler</span>
                     <strong class="text-primary">{{ productTotal(draft) }} adet</strong>
                 </div>
-                <p-table [value]="draft.products">
+                <p-table [value]="draft.products" styleClass="selected-table">
+                    <ng-template #header>
+                        <tr>
+                            <th>Seçilen ürün</th>
+                            <th class="quantity-column text-center">Adet</th>
+                            <th class="action-column"></th>
+                        </tr>
+                    </ng-template>
                     <ng-template #body let-product let-rowIndex="rowIndex">
                         <tr>
-                            <td>{{ product.name }}</td>
-                            <td style="width: 12rem">
-                                <p-inputnumber [(ngModel)]="product.quantity" [min]="1" [showButtons]="true" buttonLayout="horizontal" [disabled]="draft.status === 'Tamamlandı'" />
+                            <td class="font-medium" title="{{ product.name }}">{{ product.name }}</td>
+                            <td class="quantity-column">
+                                <p-inputnumber class="quantity-field" [(ngModel)]="product.quantity" [min]="1" [showButtons]="true" buttonLayout="horizontal" [disabled]="draft.status === 'Tamamlandı'" />
                             </td>
-                            <td style="width: 4rem">
-                                <p-button icon="pi pi-times" text severity="danger" (onClick)="removeProduct(product)" [disabled]="draft.status === 'Tamamlandı'" />
+                            <td class="action-column">
+                                <p-button icon="pi pi-trash" text rounded severity="danger" aria-label="Ürünü kaldır" (onClick)="removeProduct(product)" [disabled]="draft.status === 'Tamamlandı'" />
                             </td>
                         </tr>
                     </ng-template>
                     <ng-template #emptymessage>
                         <tr>
-                            <td class="text-center p-4 text-muted-color">Henüz ürün eklenmedi.</td>
+                            <td colspan="3" class="text-center p-4 text-muted-color">Henüz ürün eklenmedi.</td>
                         </tr>
                     </ng-template>
                 </p-table>
@@ -74,8 +82,9 @@
         </div>
         <div class="col-span-12">
             <label class="block font-medium mb-2">İşçilik ekle</label>
+            <input pInputText class="w-full mb-2" placeholder="İşçilik ara..." [(ngModel)]="laborSearch" />
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                @for (labor of labors; track labor.id) {
+                @for (labor of filteredLabors; track labor.id) {
                 <button
                     type="button"
                     class="text-left p-3 rounded-border border border-surface hover:border-primary hover:bg-primary/5 transition-colors"
@@ -138,26 +147,26 @@
         <div class="col-span-12">
             <div class="border border-surface rounded-border overflow-hidden">
                 <div class="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-800"><span class="font-medium">Seçilen işçilikler</span><strong class="text-primary">{{ laborCount(draft) }} adet · {{ laborTotal(draft) | number: '1.2-2' }} TL</strong></div>
-                <p-table [value]="draft.labor"
+                <p-table [value]="draft.labor" styleClass="selected-table"
                     ><ng-template #header
                         ><tr>
-                            <th>İşçilik</th>
-                            <th style="width: 7rem">Adet</th>
-                            <th style="width: 9rem">Birim fiyat</th>
-                            <th class="text-right">Toplam</th>
-                            <th style="width: 4rem"></th>
+                            <th>Seçilen işçilik</th>
+                            <th class="quantity-column text-center">Adet</th>
+                            <th class="price-column">Birim</th>
+                            <th class="total-column text-right">Toplam</th>
+                            <th class="action-column"></th>
                         </tr></ng-template
                     ><ng-template #body let-item let-rowIndex="rowIndex"
                         ><tr>
-                            <td>{{ item.name }}</td>
-                            <td style="width: 12rem">
+                            <td class="font-medium" title="{{ item.name }}">{{ item.name }}</td>
+                            <td class="quantity-column">
                                 <p-inputnumber class="quantity-field" [(ngModel)]="item.quantity" [min]="1" [showButtons]="true" buttonLayout="horizontal" [disabled]="draft.status === 'Tamamlandı'" />
                             </td>
-                            <td>
+                            <td class="price-column">
                                 <p-inputnumber class="price-field" [(ngModel)]="item.price" mode="currency" currency="TRY" locale="tr-TR" [min]="0" [disabled]="draft.status === 'Tamamlandı'" />
                             </td>
-                            <td class="text-right">{{ item.price * (item.quantity || 1) | number: '1.2-2' }} TL</td>
-                            <td style="width: 4rem"><p-button icon="pi pi-times" text severity="danger" (onClick)="removeLabor(item)" [disabled]="draft.status === 'Tamamlandı'" /></td></tr></ng-template
+                            <td class="total-column text-right font-semibold">{{ item.price * (item.quantity || 1) | number: '1.2-2' }} TL</td>
+                            <td class="action-column"><p-button icon="pi pi-trash" text rounded severity="danger" aria-label="İşçiliği kaldır" (onClick)="removeLabor(item)" [disabled]="draft.status === 'Tamamlandı'" /></td></tr></ng-template
                     ><ng-template #emptymessage
                         ><tr>
                             <td colspan="5" class="text-center p-4 text-muted-color">Henüz işçilik seçilmedi.</td>
@@ -168,9 +177,13 @@
         </div>
     </div>
     <ng-template #footer>
-        <p-button label="Özeti yazdır" icon="pi pi-print" severity="secondary" outlined (onClick)="openReceipt()" />
-        <p-button label="Vazgeç" text (onClick)="close()" />
-        <p-button label="Tamiri kaydet" icon="pi pi-check" (onClick)="save()" [disabled]="editingId !== null" />
+        <div class="flex items-center justify-between gap-2 w-full">
+            <p-button label="Özeti yazdır" icon="pi pi-print" severity="secondary" outlined (onClick)="openReceipt()" [disabled]="!canPrintReceipt" />
+            <div class="flex items-center gap-2">
+                <p-button label="Vazgeç" text (onClick)="close()" />
+                <p-button label="Tamiri kaydet" icon="pi pi-check" (onClick)="save()" [disabled]="editingId !== null" />
+            </div>
+        </div>
     </ng-template>
 </p-dialog>
 

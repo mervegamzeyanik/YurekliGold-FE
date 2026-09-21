@@ -18,20 +18,94 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
         `
             .compact-repair-page {
                 --repair-gap: 0.75rem;
+                max-width: 96rem;
+                margin-inline: auto;
+                width: 100%;
             }
 
             .compact-repair-page .card {
-                padding: 0.75rem;
+                padding: 1rem;
             }
 
             .compact-repair-page .section-heading {
                 margin-bottom: 0.5rem;
             }
 
+            .compact-repair-page .repair-group-label {
+                counter-increment: repair-step;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: var(--text-color-secondary);
+                font-size: 0.78rem;
+                font-weight: 700;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                padding: 0.35rem 0.15rem 0;
+            }
+
+            .compact-repair-page .repair-group-label::before {
+                content: counter(repair-step);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                flex: 0 0 1.7rem;
+                width: 1.7rem;
+                height: 1.7rem;
+                border: 2px solid var(--primary-color);
+                border-radius: 50%;
+                color: var(--primary-color);
+                background: var(--surface-card);
+                font-size: 0.75rem;
+                font-weight: 700;
+                letter-spacing: 0;
+            }
+
+            .compact-repair-page .repair-group-label::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: var(--surface-border);
+            }
+
+            .compact-repair-page .repair-group-card {
+                border-top: 2px solid var(--primary-color);
+            }
+
+            .compact-repair-page .repair-stepper {
+                counter-reset: repair-step;
+                position: relative;
+            }
+
+            .compact-repair-page .repair-stepper::before {
+                content: '';
+                position: absolute;
+                top: 1.2rem;
+                bottom: 1.2rem;
+                left: 0.85rem;
+                width: 2px;
+                background: var(--surface-border);
+            }
+
+            .compact-repair-page .repair-stepper > .repair-group-label,
+            .compact-repair-page .repair-stepper > .repair-group-card {
+                position: relative;
+            }
+
+            .compact-repair-page .repair-stepper > .repair-group-label {
+                padding-left: 0;
+            }
+
+            @media (max-width: 1279px) {
+                .compact-repair-page {
+                    max-width: 78rem;
+                }
+            }
+
             .compact-repair-page .option-button {
-                padding: 0.4rem 0.55rem;
-                min-height: 2.15rem;
-                line-height: 1.1;
+                padding: 0.55rem 0.7rem;
+                min-height: 2.5rem;
+                line-height: 1.2;
             }
 
             .compact-repair-page .option-button i {
@@ -46,7 +120,7 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
 
             .compact-repair-page .p-datatable .p-datatable-tbody > tr > td,
             .compact-repair-page .p-datatable .p-datatable-thead > tr > th {
-                padding: 0.35rem 0.45rem;
+                padding: 0.55rem 0.65rem;
                 white-space: nowrap;
             }
 
@@ -62,6 +136,73 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
                 min-width: 52rem;
             }
 
+            .compact-repair-page .selected-list {
+                border: 1px solid var(--surface-border);
+                border-radius: 0.6rem;
+                overflow: hidden;
+            }
+
+            .compact-repair-page .selected-list-header,
+            .compact-repair-page .selected-list-row {
+                display: grid;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.55rem 0.75rem;
+            }
+
+            .compact-repair-page .selected-list-header {
+                color: var(--text-color-secondary);
+                background: var(--surface-50);
+                font-size: 0.72rem;
+                font-weight: 700;
+                letter-spacing: 0.03em;
+                text-transform: uppercase;
+            }
+
+            .compact-repair-page .product-row,
+            .compact-repair-page .selected-list-header:not(:has(span:nth-child(4))) {
+                grid-template-columns: minmax(0, 1fr) 6.5rem 2.25rem;
+            }
+
+            .compact-repair-page .labor-row,
+            .compact-repair-page .labor-selected-list .selected-list-header {
+                grid-template-columns: minmax(0, 1fr) 6.5rem 8rem 8rem 2.25rem;
+            }
+
+            .compact-repair-page .selected-list-row {
+                min-height: 3.25rem;
+                border-top: 1px solid var(--surface-border);
+                background: var(--surface-0);
+            }
+
+            .compact-repair-page .selected-item-name {
+                min-width: 0;
+                overflow: hidden;
+                font-weight: 600;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .compact-repair-page .selected-list .quantity-field,
+            .compact-repair-page .selected-list .price-field {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .compact-repair-page .selected-total {
+                overflow: hidden;
+                text-align: right;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .compact-repair-page .selected-list-empty {
+                padding: 1rem;
+                color: var(--text-color-secondary);
+                font-size: 0.85rem;
+                text-align: center;
+            }
+
             .compact-repair-page .quantity-field,
             .compact-repair-page .price-field,
             .compact-repair-page .metal-field {
@@ -69,22 +210,33 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
                 width: 100%;
             }
 
-            .compact-repair-page .quantity-field {
-                min-width: 6rem;
-                max-width: 6rem;
-            }
-
-            .compact-repair-page .price-field {
-                min-width: 8rem;
-                max-width: 8rem;
-            }
-
             .compact-repair-page .metal-label {
                 min-width: 3rem;
             }
 
             .compact-repair-page .summary-card {
-                top: 1rem;
+                position: sticky;
+                top: 6.5rem;
+                align-self: start;
+            }
+
+            .compact-repair-page .summary-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                margin-top: 1rem;
+                padding-top: 0.75rem;
+                border-top: 1px solid var(--surface-border);
+            }
+
+            .compact-repair-page .summary-actions .primary-actions {
+                display: grid;
+                gap: 0.5rem;
+            }
+
+            .compact-repair-page .summary-actions .secondary-actions {
+                display: flex;
+                justify-content: flex-end;
             }
 
             @media (max-width: 1279px) {
@@ -104,6 +256,8 @@ export class RepairForm {
     readonly metalTypes: Array<'Altın' | 'Gümüş'>;
     metalDraft: RepairMetal & { gramsByType: Record<string, number> } = { id: 0, type: 'Altın', grams: 0, gramsByType: { Altın: 0, Gümüş: 0 } };
     receiptVisible = false;
+    productSearch = '';
+    laborSearch = '';
 
     constructor(
         private readonly repairState: RepairStateService,
@@ -130,6 +284,20 @@ export class RepairForm {
 
     get metalTotal() {
         return this.draft.preciousMetals.reduce((total, item) => total + item.grams, 0);
+    }
+
+    get filteredProducts() {
+        const query = this.productSearch.trim().toLocaleLowerCase('tr-TR');
+        return query ? this.productOptions.filter((product) => product.toLocaleLowerCase('tr-TR').includes(query)) : this.productOptions;
+    }
+
+    get filteredLabors() {
+        const query = this.laborSearch.trim().toLocaleLowerCase('tr-TR');
+        return query ? this.labors.filter((labor) => labor.name.toLocaleLowerCase('tr-TR').includes(query)) : this.labors;
+    }
+
+    get canPrintReceipt() {
+        return this.draft.products.length > 0 || this.draft.labor.length > 0 || this.draft.preciousMetals.length > 0;
     }
 
     addProduct(name: string) {
@@ -167,10 +335,12 @@ export class RepairForm {
     }
 
     openReceipt() {
+        if (!this.canPrintReceipt) return;
         this.receiptVisible = true;
     }
 
     printReceipt() {
+        if (!this.canPrintReceipt) return;
         const receiptWindow = window.open('', '_blank', 'width=360,height=720');
         if (!receiptWindow) return;
 

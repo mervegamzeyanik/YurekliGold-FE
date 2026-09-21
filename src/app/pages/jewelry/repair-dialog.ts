@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateService } from './repair-state.service';
 
 @Component({
     selector: 'app-repair-dialog',
     standalone: true,
-    imports: [CommonModule, FormsModule, ButtonModule, DialogModule, InputNumberModule, TableModule],
+    imports: [CommonModule, FormsModule, ButtonModule, DialogModule, InputNumberModule, InputTextModule, TableModule],
     templateUrl: './repair-dialog.html',
     styles: [
         `
@@ -22,6 +23,33 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
             .repair-dialog .price-field {
                 width: 8rem;
                 min-width: 8rem;
+            }
+
+            .repair-dialog .selected-table {
+                table-layout: fixed;
+            }
+
+            .repair-dialog .selected-table th:first-child,
+            .repair-dialog .selected-table td:first-child {
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .repair-dialog .selected-table .quantity-column {
+                width: 7rem;
+            }
+
+            .repair-dialog .selected-table .price-column {
+                width: 9rem;
+            }
+
+            .repair-dialog .selected-table .total-column {
+                width: 9rem;
+            }
+
+            .repair-dialog .selected-table .action-column {
+                width: 3rem;
+                text-align: center;
             }
         `
     ]
@@ -40,6 +68,8 @@ export class RepairDialog {
     readonly metalTypes: Array<'Altın' | 'Gümüş'>;
     metalDraft: RepairMetal & { gramsByType: Record<string, number> } = { id: 0, type: 'Altın', grams: 0, gramsByType: { Altın: 0, Gümüş: 0 } };
     receiptVisible = false;
+    productSearch = '';
+    laborSearch = '';
 
     constructor(private readonly repairState: RepairStateService) {
         this.customerOptions = repairState.customerOptions;
@@ -63,6 +93,20 @@ export class RepairDialog {
 
     metalTotal(repair: RepairRecord) {
         return repair.preciousMetals.reduce((total, item) => total + item.grams, 0);
+    }
+
+    get filteredProducts() {
+        const query = this.productSearch.trim().toLocaleLowerCase('tr-TR');
+        return query ? this.productOptions.filter((product) => product.toLocaleLowerCase('tr-TR').includes(query)) : this.productOptions;
+    }
+
+    get filteredLabors() {
+        const query = this.laborSearch.trim().toLocaleLowerCase('tr-TR');
+        return query ? this.labors.filter((labor) => labor.name.toLocaleLowerCase('tr-TR').includes(query)) : this.labors;
+    }
+
+    get canPrintReceipt() {
+        return this.draft.products.length > 0 || this.draft.labor.length > 0 || this.draft.preciousMetals.length > 0;
     }
 
     hasLabor(labor: RepairLabor) {
@@ -113,10 +157,12 @@ export class RepairDialog {
     }
 
     openReceipt() {
+        if (!this.canPrintReceipt) return;
         this.receiptVisible = true;
     }
 
     printReceipt() {
+        if (!this.canPrintReceipt) return;
         const receiptWindow = window.open('', '_blank', 'width=360,height=720');
         if (!receiptWindow) return;
 
