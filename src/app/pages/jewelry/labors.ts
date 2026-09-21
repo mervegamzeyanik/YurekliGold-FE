@@ -6,7 +6,12 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 
-interface Labor { id: number; name: string; price: number; description: string; }
+interface Labor {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+}
 
 @Component({
     selector: 'app-labors',
@@ -35,23 +40,49 @@ export class Labors {
         return query ? this.labors.filter((labor) => `${labor.name} ${labor.description}`.toLocaleLowerCase('tr-TR').includes(query)) : this.labors;
     }
 
-    get totalValue(): number { return this.labors.reduce((total, labor) => total + labor.price, 0); }
-    get averagePrice(): number { return this.labors.length ? this.totalValue / this.labors.length : 0; }
+    get totalValue(): number {
+        return this.labors.reduce((total, labor) => total + labor.price, 0);
+    }
+    get averagePrice(): number {
+        return this.labors.length ? this.totalValue / this.labors.length : 0;
+    }
 
-    edit(labor: Labor) { this.editingId = labor.id; this.formError = ''; this.draft = { ...labor }; }
+    edit(labor: Labor) {
+        this.editingId = labor.id;
+        this.formError = '';
+        this.draft = { ...labor };
+    }
 
     save() {
         const name = this.draft.name.trim();
-        if (!name) { this.formError = 'İşçilik adı zorunludur.'; return; }
-        if (!this.draft.price || this.draft.price <= 0) { this.formError = 'Geçerli bir tutar girin.'; return; }
+        if (!name) {
+            this.formError = 'İşçilik adı zorunludur.';
+            return;
+        }
+        if (!this.draft.price || this.draft.price <= 0) {
+            this.formError = 'Geçerli bir tutar girin.';
+            return;
+        }
         const duplicate = this.labors.some((item) => item.id !== this.editingId && item.name.toLocaleLowerCase('tr-TR') === name.toLocaleLowerCase('tr-TR'));
-        if (duplicate) { this.formError = 'Bu isimde bir işçilik zaten tanımlı.'; return; }
+        if (duplicate) {
+            this.formError = 'Bu isimde bir işçilik zaten tanımlı.';
+            return;
+        }
         const labor = { ...this.draft, name, description: this.draft.description.trim() };
-        this.labors = this.editingId === null ? [...this.labors, { ...labor, id: Date.now() }] : this.labors.map((item) => item.id === this.editingId ? { ...labor, id: this.editingId } : item);
+        this.labors = this.editingId === null ? [...this.labors, { ...labor, id: Date.now() }] : this.labors.map((item) => (item.id === this.editingId ? { ...labor, id: this.editingId } : item));
         this.reset();
     }
 
-    remove(labor: Labor) { this.labors = this.labors.filter((item) => item.id !== labor.id); if (this.editingId === labor.id) this.reset(); }
-    reset() { this.editingId = null; this.formError = ''; this.draft = this.empty(); }
-    private empty(): Labor { return { id: 0, name: '', price: 0, description: '' }; }
+    remove(labor: Labor) {
+        this.labors = this.labors.filter((item) => item.id !== labor.id);
+        if (this.editingId === labor.id) this.reset();
+    }
+    reset() {
+        this.editingId = null;
+        this.formError = '';
+        this.draft = this.empty();
+    }
+    private empty(): Labor {
+        return { id: 0, name: '', price: 0, description: '' };
+    }
 }

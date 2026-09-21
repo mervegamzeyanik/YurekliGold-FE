@@ -53,7 +53,21 @@ interface DebtTransaction {
 })
 export class Customers {
     customers: Customer[] = [
-        { id: 1, name: 'ALİ ÖZCAN', mobilePhone: '0532 555 10 10', workPhone: '', taxNumber: '1234567890', address: 'İstanbul', email: 'ali@example.com', notes: '', creditLimit: 10000, installmentTotal: 0, debt: 155, goldDebtGrams: 0, status: 'Aktif' },
+        {
+            id: 1,
+            name: 'ALİ ÖZCAN',
+            mobilePhone: '0532 555 10 10',
+            workPhone: '',
+            taxNumber: '1234567890',
+            address: 'İstanbul',
+            email: 'ali@example.com',
+            notes: '',
+            creditLimit: 10000,
+            installmentTotal: 0,
+            debt: 155,
+            goldDebtGrams: 0,
+            status: 'Aktif'
+        },
         { id: 2, name: 'ALTINKENT', mobilePhone: '', workPhone: '0212 555 20 20', taxNumber: '2345678901', address: 'İstanbul', email: '', notes: '', creditLimit: 25000, installmentTotal: 1605, debt: 1605, goldDebtGrams: 2.35, status: 'Aktif' },
         { id: 3, name: 'ARZU PIRLANTA', mobilePhone: '0542 555 30 30', workPhone: '', taxNumber: '3456789012', address: 'İzmir', email: '', notes: '', creditLimit: 15000, installmentTotal: 0, debt: 0, goldDebtGrams: 0, status: 'Aktif' },
         { id: 4, name: 'ATASAY ARENA PARK', mobilePhone: '', workPhone: '0216 555 40 40', taxNumber: '4567890123', address: 'İstanbul', email: '', notes: '', creditLimit: 30000, installmentTotal: 1160, debt: 1160, goldDebtGrams: 0, status: 'Aktif' },
@@ -86,24 +100,42 @@ export class Customers {
     manualDebtAmount = 0;
     manualDebtGoldGrams = 0;
     debtTransactions: Record<number, DebtTransaction[]> = {
-        1: [{ date: '20.09.2026', description: 'Tamir işçiliği - TMR-1001', type: 'Borç', amount: 350 }, { date: '15.09.2026', description: 'Nakit tahsilat', type: 'Tahsilat', amount: 195 }],
+        1: [
+            { date: '20.09.2026', description: 'Tamir işçiliği - TMR-1001', type: 'Borç', amount: 350 },
+            { date: '15.09.2026', description: 'Nakit tahsilat', type: 'Tahsilat', amount: 195 }
+        ],
         2: [{ date: '19.09.2026', description: 'Tamir işçiliği ve maden', type: 'Borç', amount: 1605, goldGrams: 2.35 }],
         3: [],
         4: [{ date: '18.09.2026', description: 'Tamir işçiliği - TMR-998', type: 'Borç', amount: 300 }],
         5: []
     };
 
-    get totalDebt() { return this.customers.reduce((total, customer) => total + customer.debt, 0); }
-    get selectedRepairs() { return this.selectedCustomer ? this.repairHistory.filter((repair) => repair.customerId === this.selectedCustomer?.id) : []; }
-    get selectedLaborTotal() { return this.selectedRepairs.reduce((total, repair) => total + repair.laborTotal, 0); }
-    get selectedMetalTotal() { return this.selectedRepairs.reduce((total, repair) => total + repair.metalTotal, 0); }
-    get selectedDebtTransactions() { return this.selectedCustomer ? this.debtTransactions[this.selectedCustomer.id] ?? [] : []; }
+    get totalDebt() {
+        return this.customers.reduce((total, customer) => total + customer.debt, 0);
+    }
+    get selectedRepairs() {
+        return this.selectedCustomer ? this.repairHistory.filter((repair) => repair.customerId === this.selectedCustomer?.id) : [];
+    }
+    get selectedLaborTotal() {
+        return this.selectedRepairs.reduce((total, repair) => total + repair.laborTotal, 0);
+    }
+    get selectedMetalTotal() {
+        return this.selectedRepairs.reduce((total, repair) => total + repair.metalTotal, 0);
+    }
+    get selectedDebtTransactions() {
+        return this.selectedCustomer ? (this.debtTransactions[this.selectedCustomer.id] ?? []) : [];
+    }
     filter(event: Event) {
         const value = (event.target as HTMLInputElement).value.toLocaleLowerCase('tr-TR');
         this.filteredCustomers = this.customers.filter((customer) => Object.values(customer).some((field) => String(field).toLocaleLowerCase('tr-TR').includes(value)));
     }
-    selectCustomer(customer: Customer | Customer[] | undefined) { this.selectedCustomer = customer && !Array.isArray(customer) ? customer : null; }
-    openDebtDetails() { this.debtDialogMode = 'view'; this.debtDialogVisible = true; }
+    selectCustomer(customer: Customer | Customer[] | undefined) {
+        this.selectedCustomer = customer && !Array.isArray(customer) ? customer : null;
+    }
+    openDebtDetails() {
+        this.debtDialogMode = 'view';
+        this.debtDialogVisible = true;
+    }
     openManualDebt() {
         if (!this.selectedCustomer) return;
         this.manualDebtType = 'Nakit';
@@ -118,9 +150,19 @@ export class Customers {
         this.customerCollectionGoldGrams = 0;
         this.customerCollectionDialogVisible = true;
     }
-    openRepairDetails(repair: RepairHistory) { this.selectedRepair = repair; this.repairDialogVisible = true; }
-    backToList() { this.selectedCustomer = null; }
-    openCollection(repair: RepairHistory) { if (repair.status === 'Tamamlandı') { this.collectionAmount = repair.laborTotal - repair.collected; this.collectionDialogVisible = true; } }
+    openRepairDetails(repair: RepairHistory) {
+        this.selectedRepair = repair;
+        this.repairDialogVisible = true;
+    }
+    backToList() {
+        this.selectedCustomer = null;
+    }
+    openCollection(repair: RepairHistory) {
+        if (repair.status === 'Tamamlandı') {
+            this.collectionAmount = repair.laborTotal - repair.collected;
+            this.collectionDialogVisible = true;
+        }
+    }
     collectRepair() {
         if (!this.selectedRepair || this.collectionAmount <= 0) return;
         const amount = Math.min(this.selectedRepair.laborTotal - this.selectedRepair.collected, this.collectionAmount);
@@ -156,31 +198,37 @@ export class Customers {
         const customer = this.selectedCustomer;
         if (this.manualDebtType === 'Nakit' && this.manualDebtAmount > 0) {
             customer.debt += this.manualDebtAmount;
-            this.debtTransactions[customer.id] = [
-                ...(this.debtTransactions[customer.id] ?? []),
-                { date: new Date().toLocaleDateString('tr-TR'), description: 'Manuel TL borç ekleme', type: 'Borç', amount: this.manualDebtAmount }
-            ];
+            this.debtTransactions[customer.id] = [...(this.debtTransactions[customer.id] ?? []), { date: new Date().toLocaleDateString('tr-TR'), description: 'Manuel TL borç ekleme', type: 'Borç', amount: this.manualDebtAmount }];
         } else if (this.manualDebtType === 'Altın' && this.manualDebtGoldGrams > 0) {
             customer.goldDebtGrams += this.manualDebtGoldGrams;
-            this.debtTransactions[customer.id] = [
-                ...(this.debtTransactions[customer.id] ?? []),
-                { date: new Date().toLocaleDateString('tr-TR'), description: 'Manuel altın borç ekleme', type: 'Borç', amount: 0, goldGrams: this.manualDebtGoldGrams }
-            ];
+            this.debtTransactions[customer.id] = [...(this.debtTransactions[customer.id] ?? []), { date: new Date().toLocaleDateString('tr-TR'), description: 'Manuel altın borç ekleme', type: 'Borç', amount: 0, goldGrams: this.manualDebtGoldGrams }];
         } else {
             return;
         }
         this.manualDebtDialogVisible = false;
     }
-    openNew() { this.editingId = null; this.draft = this.emptyCustomer(); this.dialogVisible = true; }
-    edit(customer: Customer) { this.editingId = customer.id; this.draft = { ...customer }; this.dialogVisible = true; }
+    openNew() {
+        this.editingId = null;
+        this.draft = this.emptyCustomer();
+        this.dialogVisible = true;
+    }
+    edit(customer: Customer) {
+        this.editingId = customer.id;
+        this.draft = { ...customer };
+        this.dialogVisible = true;
+    }
     save() {
         if (!this.draft.name.trim()) return;
         if (this.editingId === null) this.customers = [...this.customers, { ...this.draft, id: Date.now(), debt: 0 }];
-        else this.customers = this.customers.map((customer) => customer.id === this.editingId ? { ...this.draft, id: this.editingId } : customer);
+        else this.customers = this.customers.map((customer) => (customer.id === this.editingId ? { ...this.draft, id: this.editingId } : customer));
         this.filteredCustomers = [...this.customers];
         this.selectedCustomer = this.customers.find((customer) => customer.id === (this.editingId ?? this.customers[this.customers.length - 1].id)) ?? null;
         this.dialogVisible = false;
     }
-    showInfo(message: string) { window.alert(message); }
-    private emptyCustomer(): Customer { return { id: 0, name: '', mobilePhone: '', workPhone: '', taxNumber: '', address: '', email: '', notes: '', creditLimit: 0, installmentTotal: 0, debt: 0, goldDebtGrams: 0, status: 'Aktif' }; }
+    showInfo(message: string) {
+        window.alert(message);
+    }
+    private emptyCustomer(): Customer {
+        return { id: 0, name: '', mobilePhone: '', workPhone: '', taxNumber: '', address: '', email: '', notes: '', creditLimit: 0, installmentTotal: 0, debt: 0, goldDebtGrams: 0, status: 'Aktif' };
+    }
 }

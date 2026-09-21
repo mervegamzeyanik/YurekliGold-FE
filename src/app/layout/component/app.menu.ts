@@ -16,7 +16,7 @@ import { AppMenuitem } from './app.menuitem';
                 <li class="menu-separator"></li>
             }
         }
-    </ul> `,
+    </ul> `
 })
 export class AppMenu {
     model: MenuItem[] = [];
@@ -34,9 +34,7 @@ export class AppMenu {
             },
             {
                 label: 'Kuyumcu Tanımları',
-                items: [
-                    { label: 'İşçilik Tanımları', icon: 'pi pi-fw pi-money-bill', routerLink: ['/labors'] }
-                ]
+                items: [{ label: 'İşçilik Tanımları', icon: 'pi pi-fw pi-money-bill', routerLink: ['/labors'] }]
             }
         ];
     }

@@ -8,6 +8,7 @@ import { Customers } from './app/pages/crm/customers';
 import { Users } from './app/pages/crm/users';
 import { Repair } from './app/pages/jewelry/repair';
 import { Labors } from './app/pages/jewelry/labors';
+import { RepairForm } from './app/pages/jewelry/repair-form';
 import { authGuard } from './app/core/auth.guard';
 
 export const appRoutes: Routes = [
@@ -19,6 +20,7 @@ export const appRoutes: Routes = [
             { path: '', component: Dashboard },
             { path: 'customers', component: Customers },
             { path: 'users', component: Users },
+            { path: 'repairs/new', component: RepairForm },
             { path: 'repairs', component: Repair },
             { path: 'labors', component: Labors },
             { path: 'uikit', loadChildren: () => import('./app/pages/uikit/uikit.routes') },

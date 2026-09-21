@@ -74,7 +74,6 @@ import { AuthService } from '@/app/core/auth.service';
                 </div>
             </div>
         </div>
-
     </div>`
 })
 export class AppTopbar {

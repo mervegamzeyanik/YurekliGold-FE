@@ -30,7 +30,7 @@ export class Dashboard {
     }
 
     startQuickRepair(draft: RepairRecord) {
-        if (!draft.customer || !draft.broughtBy || !draft.product) {
+        if (!draft.customer || !draft.broughtBy || !draft.products.length) {
             return;
         }
 
@@ -47,6 +47,6 @@ export class Dashboard {
     }
 
     private emptyRepair(): RepairRecord {
-        return { id: 0, customer: '', broughtBy: '', product: '', description: '', labor: [], preciousMetals: [], status: 'Başladı', createdAt: '' };
+        return { id: 0, customer: '', broughtBy: '', products: [], description: '', labor: [], preciousMetals: [], status: 'Başladı', createdAt: '' };
     }
 }

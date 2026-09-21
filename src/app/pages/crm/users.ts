@@ -42,18 +42,45 @@ export class Users {
     editingId: number | null = null;
     draft: User = this.emptyUser();
 
-    get activeCount() { return this.users.filter((user) => user.status === 'Aktif').length; }
-    get adminCount() { return this.users.filter((user) => user.role === 'Yönetici').length; }
-    filter(event: Event) { const value = (event.target as HTMLInputElement).value.toLocaleLowerCase('tr-TR'); this.filteredUsers = this.users.filter((user) => `${user.name} ${user.email} ${user.role} ${user.task}`.toLocaleLowerCase('tr-TR').includes(value)); }
-    initials(name: string) { return name.split(' ').map((part) => part[0]).join('').slice(0, 2); }
-    openNew() { this.editingId = null; this.draft = this.emptyUser(); this.dialogVisible = true; }
-    edit(user: User) { this.editingId = user.id; this.draft = { ...user, permissions: [...user.permissions] }; this.dialogVisible = true; }
+    get activeCount() {
+        return this.users.filter((user) => user.status === 'Aktif').length;
+    }
+    get adminCount() {
+        return this.users.filter((user) => user.role === 'Yönetici').length;
+    }
+    filter(event: Event) {
+        const value = (event.target as HTMLInputElement).value.toLocaleLowerCase('tr-TR');
+        this.filteredUsers = this.users.filter((user) => `${user.name} ${user.email} ${user.role} ${user.task}`.toLocaleLowerCase('tr-TR').includes(value));
+    }
+    initials(name: string) {
+        return name
+            .split(' ')
+            .map((part) => part[0])
+            .join('')
+            .slice(0, 2);
+    }
+    openNew() {
+        this.editingId = null;
+        this.draft = this.emptyUser();
+        this.dialogVisible = true;
+    }
+    edit(user: User) {
+        this.editingId = user.id;
+        this.draft = { ...user, permissions: [...user.permissions] };
+        this.dialogVisible = true;
+    }
     save() {
         if (!this.draft.name.trim() || !this.draft.email.trim() || !this.draft.task.trim()) return;
         if (this.editingId === null) this.users = [...this.users, { ...this.draft, id: Date.now() }];
-        else this.users = this.users.map((user) => user.id === this.editingId ? { ...this.draft, id: this.editingId } : user);
-        this.filteredUsers = [...this.users]; this.dialogVisible = false;
+        else this.users = this.users.map((user) => (user.id === this.editingId ? { ...this.draft, id: this.editingId } : user));
+        this.filteredUsers = [...this.users];
+        this.dialogVisible = false;
     }
-    remove(user: User) { this.users = this.users.filter((item) => item.id !== user.id); this.filteredUsers = this.filteredUsers.filter((item) => item.id !== user.id); }
-    private emptyUser(): User { return { id: 0, name: '', email: '', role: 'Görüntüleyici', task: 'Satış Danışmanı', phone: '', status: 'Aktif', permissions: [] }; }
+    remove(user: User) {
+        this.users = this.users.filter((item) => item.id !== user.id);
+        this.filteredUsers = this.filteredUsers.filter((item) => item.id !== user.id);
+    }
+    private emptyUser(): User {
+        return { id: 0, name: '', email: '', role: 'Görüntüleyici', task: 'Satış Danışmanı', phone: '', status: 'Aktif', permissions: [] };
+    }
 }
