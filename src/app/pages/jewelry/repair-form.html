@@ -3,18 +3,20 @@
         <div>
             <span class="text-sm text-muted-color">Kuyumcu / Tamir İşlemleri</span>
             <h1 class="text-xl font-semibold mt-1 mb-0">Yeni tamir kaydı</h1>
+            <div class="flex items-center gap-2 text-sm text-muted-color mt-2">
+                <span>Adım 1/3 · Bilgileri doldurun</span>
+                <span>•</span>
+                <span>Taslak</span>
+            </div>
         </div>
         <p-button label="Tamir listesine dön" icon="pi pi-arrow-left" text (onClick)="cancel()" />
     </div>
 
     <div class="grid grid-cols-12 gap-5 items-start">
         <div class="repair-stepper col-span-12 xl:col-span-9 grid grid-cols-12 gap-3">
-            <div class="repair-group-label col-span-12">Kabul bilgileri</div>
+            <div class="repair-group-label col-span-12">1. Kabul bilgileri</div>
             <div class="card repair-group-card col-span-12">
-                <div class="section-heading flex items-center gap-2">
-                    <span class="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary"><i class="pi pi-user text-sm"></i></span>
-                    <h2 class="text-base font-semibold m-0">Müşteri</h2>
-                </div>
+                <div class="section-heading"><h2 class="text-base font-semibold m-0">Müşteri ve teslim</h2><span class="text-sm text-muted-color">Zorunlu alanlar *</span></div>
                 <div class="grid grid-cols-12 gap-4">
                     <div class="col-span-12">
                         <label class="block text-sm font-medium mb-2">Mevcut müşteri *</label>
@@ -25,6 +27,9 @@
                             </button>
                             }
                         </div>
+                        @if (!draft.customer) {
+                        <small class="block mt-1 text-sm text-muted-color">Müşteri seçilmesi gerekiyor.</small>
+                        }
                     </div>
                     <div class="col-span-12">
                         <label class="block text-sm font-medium mb-2">Ürünü getiren *</label>
@@ -35,15 +40,18 @@
                             </button>
                             }
                         </div>
+                        @if (!draft.broughtBy) {
+                        <small class="block mt-1 text-sm text-muted-color">Ürünü getiren kişi seçilmesi gerekiyor.</small>
+                        }
                     </div>
                 </div>
             </div>
 
-            <div class="repair-group-label col-span-12">Tamir kalemleri</div>
+            <div class="repair-group-label col-span-12">2. Tamir kalemleri</div>
             <div class="card repair-group-card col-span-12 lg:col-span-12">
                 <div class="section-heading flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2"><span class="flex items-center justify-center w-7 h-7 rounded-full bg-orange-100 text-orange-600"><i class="pi pi-box text-xs"></i></span><h2 class="text-base font-semibold m-0">Ürün / takı</h2></div>
-                    <strong class="text-primary">{{ productCount }} adet</strong>
+                    <div><h2 class="text-base font-semibold m-0">Ürün / takı *</h2><span class="text-sm text-muted-color">Tamir edilecek ürünleri seçin.</span></div>
+                    <strong class="text-sm text-muted-color">{{ productCount }} adet</strong>
                 </div>
                 <input pInputText class="w-full mb-2" placeholder="Ürün ara..." [(ngModel)]="productSearch" />
                 <div class="option-picker grid grid-cols-2 md:grid-cols-4 gap-1.5 mb-2">
@@ -53,23 +61,31 @@
                     </button>
                     }
                 </div>
-                <div class="selected-list">
+                <div class="selected-list product-selected-list">
                     <div class="selected-list-header"><span>Seçilen ürün</span><span>Adet</span><span></span></div>
                     @for (product of draft.products; track product.name) {
                     <div class="selected-list-row product-row">
                         <span class="selected-item-name" title="{{ product.name }}">{{ product.name }}</span>
-                        <p-inputnumber class="quantity-field selected-quantity" [(ngModel)]="product.quantity" [min]="1" [showButtons]="true" buttonLayout="horizontal" />
+                        <div class="quantity-control">
+                            <button type="button" class="quantity-button" aria-label="Adedi azalt" (click)="changeProductQuantity(product, -1)">−</button>
+                            <input pInputText class="quantity-input" type="number" min="1" [(ngModel)]="product.quantity" aria-label="Ürün adedi" />
+                            <button type="button" class="quantity-button" aria-label="Adedi artır" (click)="changeProductQuantity(product, 1)">+</button>
+                        </div>
                         <p-button icon="pi pi-trash" text rounded severity="danger" aria-label="Ürünü kaldır" (onClick)="removeProduct(product)" />
+                    </div>
                     } @empty {
                     <div class="selected-list-empty">Henüz ürün eklenmedi.</div>
                     }
                 </div>
+                @if (!draft.products.length) {
+                <small class="block mt-1 text-sm text-muted-color">En az bir ürün ekleyin.</small>
+                }
             </div>
 
             <div class="card repair-group-card col-span-12 lg:col-span-12">
                 <div class="section-heading flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2"><span class="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary"><i class="pi pi-wrench text-xs"></i></span><h2 class="text-base font-semibold m-0">İşçilikler</h2></div>
-                    <strong class="text-primary">{{ laborCount }} adet · {{ laborTotal | number: '1.2-2' }} TL</strong>
+                    <div><h2 class="text-base font-semibold m-0">3. İşçilik</h2><span class="text-sm text-muted-color">Gerekliyse işçilik kalemi ekleyin.</span></div>
+                    <strong class="text-sm text-muted-color">{{ laborCount }} adet · {{ laborTotal | number: '1.2-2' }} TL</strong>
                 </div>
                 <input pInputText class="w-full mb-2" placeholder="İşçilik ara..." [(ngModel)]="laborSearch" />
                 <div class="option-picker grid grid-cols-2 md:grid-cols-4 gap-1.5 mb-2">
@@ -84,41 +100,47 @@
                     @for (item of draft.labor; track item.id) {
                     <div class="selected-list-row labor-row">
                         <span class="selected-item-name" title="{{ item.name }}">{{ item.name }}</span>
-                        <p-inputnumber class="quantity-field selected-quantity" [(ngModel)]="item.quantity" [min]="1" [showButtons]="true" buttonLayout="horizontal" />
+                        <div class="quantity-control">
+                            <button type="button" class="quantity-button" aria-label="Adedi azalt" (click)="changeLaborQuantity(item, -1)">−</button>
+                            <input pInputText class="quantity-input" type="number" min="1" [(ngModel)]="item.quantity" aria-label="İşçilik adedi" />
+                            <button type="button" class="quantity-button" aria-label="Adedi artır" (click)="changeLaborQuantity(item, 1)">+</button>
+                        </div>
                         <p-inputnumber class="price-field selected-price" [(ngModel)]="item.price" mode="currency" currency="TRY" locale="tr-TR" [min]="0" />
                         <strong class="selected-total">{{ item.price * (item.quantity || 1) | number: '1.2-2' }} TL</strong>
                         <p-button icon="pi pi-trash" text rounded severity="danger" aria-label="İşçiliği kaldır" (onClick)="removeLabor(item)" />
+                    </div>
                     } @empty {
                     <div class="selected-list-empty">Henüz işçilik eklenmedi.</div>
                     }
                 </div>
             </div>
 
-            <div class="repair-group-label col-span-12">Maden ve özet</div>
-            <div class="card repair-group-card col-span-12">
-                <div class="section-heading flex items-center gap-2"><span class="flex items-center justify-center w-7 h-7 rounded-full bg-orange-100 text-orange-600"><i class="pi pi-diamond text-xs"></i></span><h2 class="text-base font-semibold m-0">Kıymetli madenler</h2></div>
-                <div class="grid grid-cols-1 gap-1.5">
+            <div class="repair-group-label col-span-12">4. Ek bilgiler</div>
+            <details class="card repair-group-card repair-collapsible col-span-12">
+                <summary class="flex items-center justify-between gap-3">Kıymetli madenler <span class="text-sm text-muted-color">İsteğe bağlı</span></summary>
+                <div class="grid grid-cols-1 gap-1.5 mt-4">
                     @for (metalType of metalTypes; track metalType) {
                     <div class="flex items-center gap-1.5 p-1.5 rounded-border border border-surface">
                         <span class="metal-label font-semibold text-sm">{{ metalType }}</span>
-                        <p-inputnumber class="metal-field flex-1" [(ngModel)]="metalDraft.gramsByType[metalType]" [min]="0.001" [minFractionDigits]="3" [maxFractionDigits]="3" suffix=" gr" placeholder="Gram" />
-                        <p-button icon="pi pi-plus" label="Ekle" size="small" severity="warn" outlined (onClick)="addMetal(metalType)" />
+                        <input pInputText class="metal-field flex-1" type="number" min="0.001" step="0.001" [(ngModel)]="metalDraft.gramsByType[metalType]" placeholder="Gram" aria-label="{{ metalType }} gram" />
+                        <p-button icon="pi pi-plus" label="Ekle" size="small" outlined (onClick)="addMetal(metalType)" />
                     </div>
                     }
                 </div>
-                <div class="table-scroll mt-4">                <p-table [value]="draft.preciousMetals" styleClass="repair-table compact-table">
+                <div class="table-scroll mt-4"><p-table [value]="draft.preciousMetals" styleClass="repair-table compact-table">
                     <ng-template #header><tr><th>Maden</th><th class="text-right">Gram</th><th style="width: 4rem"></th></tr></ng-template>
                     <ng-template #body let-metal><tr><td>{{ metal.type }}</td><td class="text-right">{{ metal.grams | number: '1.3-3' }} gr</td><td><p-button icon="pi pi-times" text severity="danger" (onClick)="removeMetal(metal)" /></td></tr></ng-template>
                     <ng-template #emptymessage><tr><td colspan="3" class="text-center p-5 text-muted-color">Kıymetli maden eklenmedi.</td></tr></ng-template>
                 </p-table></div>
-            </div>
+            </details>
         </div>
 
         <div class="col-span-12 xl:col-span-3">
             <div class="repair-group-label mb-1">Kayıt özeti</div>
             <div class="card summary-card">
-                <h2 class="text-lg font-semibold mt-0">Tamir özeti</h2>
-                <div class="flex flex-col gap-2 mt-3">
+            <h2 class="text-lg font-semibold mt-0">Kayıt özeti</h2>
+            <p class="text-sm text-muted-color mt-1 mb-0">Kaydetmeden önce bilgileri kontrol edin.</p>
+            <div class="flex flex-col gap-2 mt-3">
                     <div class="flex justify-between"><span class="text-muted-color">Müşteri</span><strong>{{ draft.customer || '-' }}</strong></div>
                     <div class="flex justify-between"><span class="text-muted-color">Ürün adedi</span><strong>{{ productCount }}</strong></div>
                     <div class="flex justify-between"><span class="text-muted-color">İşçilik adedi</span><strong>{{ laborCount }}</strong></div>

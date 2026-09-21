@@ -48,34 +48,59 @@
         </div>
     </div>
     } @else {
-    <div class="flex items-center gap-3"><p-button icon="pi pi-arrow-left" label="Müşteri listesine dön" text (onClick)="backToList()" /></div>
-    <div class="grid grid-cols-12 gap-3">
+    <div class="flex items-center justify-between gap-3">
+        <p-button icon="pi pi-arrow-left" label="Müşteri listesine dön" text (onClick)="backToList()" />
+        <p-tag [value]="selectedDebtStatus" [severity]="selectedCustomer.debt > 0 || selectedCustomer.goldDebtGrams > 0 ? 'warn' : 'success'" />
+    </div>
+    <div class="customer-detail-hero">
+        <div class="customer-avatar">{{ selectedCustomer.name.charAt(0) }}</div>
+        <div class="customer-hero-content">
+            <span class="text-muted-color text-sm">Müşteri detay kartı</span>
+            <div class="flex flex-wrap items-center gap-3 mt-1">
+                <h1 class="text-2xl font-semibold m-0">{{ selectedCustomer.name }}</h1>
+                <p-tag [value]="selectedCustomer.status" [severity]="selectedCustomer.status === 'Aktif' ? 'success' : 'secondary'" />
+            </div>
+            <div class="customer-hero-meta">
+                <span><i class="pi pi-phone"></i>{{ selectedCustomer.mobilePhone || selectedCustomer.workPhone || 'Telefon yok' }}</span>
+                <span><i class="pi pi-id-card"></i>{{ selectedCustomer.taxNumber || 'Vergi numarası yok' }}</span>
+                <span><i class="pi pi-map-marker"></i>{{ selectedCustomer.address || 'Adres yok' }}</span>
+            </div>
+        </div>
+        <p-button label="Bilgileri düzenle" icon="pi pi-pencil" outlined (onClick)="edit(selectedCustomer)" />
+    </div>
+    <div class="grid grid-cols-12 gap-4">
         <div class="col-span-12 xl:col-span-8">
-            <div class="card">
-                <div class="flex items-center justify-between mb-4">
+            <div class="card customer-financial-card">
+                <div class="section-heading">
                     <div>
-                        <span class="text-muted-color">Müşteri detayı</span>
-                        <h2 class="text-xl font-semibold mt-1 mb-0">{{ selectedCustomer.name }}</h2>
+                        <span class="text-muted-color">Cari hesap</span>
+                        <h2 class="text-xl font-semibold mt-1 mb-0">Finansal özet</h2>
                     </div>
-                    <p-button label="Bilgileri düzenle" icon="pi pi-pencil" outlined (onClick)="edit(selectedCustomer)" />
+                    <i class="pi pi-wallet text-xl text-primary"></i>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
-                    <div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Toplam borç</span><strong class="text-orange-500">{{ selectedCustomer.debt | number: '1.2-2' }} TL</strong></div>
-                    <div class="p-3 rounded-border bg-yellow-50 dark:bg-yellow-400/10">
-                        <span class="block text-muted-color text-sm">Altın borcu</span><strong class="text-yellow-700">{{ selectedCustomer.goldDebtGrams | number: '1.3-3' }} gr</strong>
+                    <div class="customer-summary-card p-3 rounded-border bg-orange-50 dark:bg-orange-400/10"><span class="block text-muted-color text-sm">TL borcu</span><strong class="summary-value text-orange-500">{{ selectedCustomer.debt | number: '1.2-2' }} TL</strong></div>
+                    <div class="customer-summary-card p-3 rounded-border bg-yellow-50 dark:bg-yellow-400/10">
+                        <span class="block text-muted-color text-sm">Altın borcu</span><strong class="summary-value text-yellow-700">{{ selectedCustomer.goldDebtGrams | number: '1.3-3' }} gr</strong>
                     </div>
-                    <div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Kalan taksit</span><strong>{{ selectedCustomer.installmentTotal | number: '1.2-2' }} TL</strong></div>
-                    <div class="p-3 rounded-border bg-orange-50 dark:bg-orange-400/10"><span class="block text-muted-color text-sm">İşçilik toplamı</span><strong>{{ selectedLaborTotal | number: '1.2-2' }} TL</strong></div>
-                    <div class="p-3 rounded-border bg-yellow-50 dark:bg-yellow-400/10"><span class="block text-muted-color text-sm">Maden toplamı</span><strong>{{ selectedMetalTotal | number: '1.3-3' }} gr</strong></div>
+                    <div class="customer-summary-card p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Kalan taksit</span><strong class="summary-value">{{ selectedCustomer.installmentTotal | number: '1.2-2' }} TL</strong></div>
+                    <div class="customer-summary-card p-3 rounded-border bg-orange-50 dark:bg-orange-400/10"><span class="block text-muted-color text-sm">İşçilik toplamı</span><strong class="summary-value">{{ selectedLaborTotal | number: '1.2-2' }} TL</strong></div>
+                    <div class="customer-summary-card p-3 rounded-border bg-yellow-50 dark:bg-yellow-400/10"><span class="block text-muted-color text-sm">Maden toplamı</span><strong class="summary-value">{{ selectedMetalTotal | number: '1.3-3' }} gr</strong></div>
                 </div>
-                <div class="flex flex-col gap-2 text-sm text-muted-color">
-                    <span><i class="pi pi-phone mr-2"></i>{{ selectedCustomer.mobilePhone || selectedCustomer.workPhone || 'Telefon bilgisi yok' }}</span
-                    ><span><i class="pi pi-envelope mr-2"></i>{{ selectedCustomer.email || 'E-posta bilgisi yok' }}</span><span><i class="pi pi-map-marker mr-2"></i>{{ selectedCustomer.address || 'Adres bilgisi yok' }}</span>
+                <div class="customer-contact-list text-sm text-muted-color">
+                    <div class="customer-contact-item"><i class="pi pi-credit-card"></i><span>{{ selectedCustomer.creditLimit | number: '1.2-2' }} TL kredi limiti</span></div>
+                    <div class="customer-contact-item"><i class="pi pi-calendar"></i><span>{{ selectedRepairs.length }} tamir kaydı</span></div>
+                    <div class="customer-contact-item"><i class="pi pi-file-edit"></i><span>{{ selectedCustomer.notes || 'Özel not bulunmuyor' }}</span></div>
+                </div>
+                <div class="credit-limit-box">
+                    <div class="flex items-center justify-between gap-3 mb-2"><span class="text-sm text-muted-color">Kredi limiti kullanımı</span><strong>{{ selectedCustomer.debt | number: '1.2-2' }} / {{ selectedCustomer.creditLimit | number: '1.2-2' }} TL</strong></div>
+                    <div class="credit-progress"><span [style.width.%]="selectedCreditUsagePercent"></span></div>
+                    <small class="text-muted-color mt-2 block">{{ selectedCreditUsagePercent | number: '1.0-0' }}% kullanım</small>
                 </div>
             </div>
         </div>
         <div class="col-span-12 xl:col-span-4">
-            <div class="card h-full">
+            <div class="card h-full customer-repair-card">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <span class="text-muted-color">Tamir geçmişi</span>
@@ -83,14 +108,8 @@
                     </div>
                     <i class="pi pi-wrench text-2xl text-primary"></i>
                 </div>
-                <div class="grid grid-cols-2 gap-3 mb-5">
-                    <div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Belirlenen limit</span><strong>{{ selectedCustomer.creditLimit | number: '1.2-2' }} TL</strong></div>
-                    <div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Toplam borç</span><strong class="text-orange-500">{{ selectedCustomer.debt | number: '1.2-2' }} TL</strong></div>
-                    <div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Veresiye toplamı</span><strong>{{ selectedCustomer.debt | number: '1.2-2' }} TL</strong></div>
-                    <div class="p-3 rounded-border bg-surface-100 dark:bg-surface-800"><span class="block text-muted-color text-sm">Kalan taksit</span><strong>{{ selectedCustomer.installmentTotal | number: '1.2-2' }} TL</strong></div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-                    <p-button label="Borç detayı" icon="pi pi-book" outlined (onClick)="openDebtDetails()" /><p-button label="Borç ekle" icon="pi pi-plus-circle" severity="warn" (onClick)="openManualDebt()" /><p-button
+                <div class="customer-action-grid mb-5">
+                    <p-button label="Borç hareketleri" icon="pi pi-book" outlined (onClick)="openDebtDetails()" /><p-button label="Borç ekle" icon="pi pi-plus-circle" severity="warn" (onClick)="openManualDebt()" /><p-button
                         label="Tahsilat al"
                         icon="pi pi-wallet"
                         severity="success"
@@ -120,6 +139,22 @@
                 </div>
             </div>
         </div>
+        <div class="col-span-12">
+            <div class="card customer-note-card">
+                <div class="section-heading">
+                    <div>
+                        <span class="text-muted-color">Müşteri iletişimi</span>
+                        <h2 class="text-xl font-semibold mt-1 mb-0">İletişim ve notlar</h2>
+                    </div>
+                    <i class="pi pi-info-circle text-xl text-primary"></i>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="customer-info-row"><i class="pi pi-envelope"></i><div><span class="block text-xs text-muted-color">E-posta</span><strong>{{ selectedCustomer.email || 'Bilgi yok' }}</strong></div></div>
+                    <div class="customer-info-row"><i class="pi pi-map-marker"></i><div><span class="block text-xs text-muted-color">Adres</span><strong>{{ selectedCustomer.address || 'Bilgi yok' }}</strong></div></div>
+                    <div class="customer-info-row"><i class="pi pi-comment"></i><div><span class="block text-xs text-muted-color">Özel not</span><strong>{{ selectedCustomer.notes || 'Not eklenmemiş' }}</strong></div></div>
+                </div>
+            </div>
+        </div>
     </div>
     }
 </div>
@@ -143,14 +178,18 @@
     <ng-template #footer><p-button label="Vazgeç" text (onClick)="dialogVisible = false" /><p-button label="Kaydet" icon="pi pi-check" (onClick)="save()" /></ng-template>
 </p-dialog>
 <p-dialog [(visible)]="debtDialogVisible" [modal]="true" [draggable]="false" [style]="{ width: 'min(52rem, 95vw)' }" header="Borç detayı">
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center justify-between gap-4 mb-4">
         <div>
-            <span class="text-muted-color">Cari hesap</span>
+            <span class="text-muted-color">Cari hesap hareketleri</span>
             <h2 class="text-xl font-semibold mt-1 mb-0">{{ selectedCustomer?.name }}</h2>
         </div>
         <div class="text-right">
-            <strong class="block text-xl text-orange-500">{{ selectedCustomer?.debt | number: '1.2-2' }} TL</strong><span class="text-sm text-yellow-700">{{ selectedCustomer?.goldDebtGrams | number: '1.3-3' }} gr altın</span>
+            <span class="block text-xs text-muted-color">Güncel bakiye</span><strong class="block text-xl text-orange-500">{{ selectedCustomer?.debt | number: '1.2-2' }} TL</strong><span class="text-sm text-yellow-700">{{ selectedCustomer?.goldDebtGrams | number: '1.3-3' }} gr altın</span>
         </div>
+    </div>
+    <div class="debt-dialog-summary">
+        <div><span class="block text-sm text-muted-color">TL borcu</span><strong class="text-orange-500">{{ selectedCustomer?.debt | number: '1.2-2' }} TL</strong></div>
+        <div><span class="block text-sm text-muted-color">Altın borcu</span><strong class="text-yellow-700">{{ selectedCustomer?.goldDebtGrams | number: '1.3-3' }} gr</strong></div>
     </div>
     <p-table [value]="selectedDebtTransactions" [responsiveLayout]="'scroll'"
         ><ng-template #header
@@ -166,7 +205,9 @@
                 <td>{{ transaction.description }}</td>
                 <td><p-tag [value]="transaction.type" [severity]="transaction.type === 'Borç' ? 'danger' : 'success'" /></td>
                 <td class="text-right font-semibold">
-                    @if (transaction.amount) { {{ transaction.amount | number: '1.2-2' }} TL } @if (transaction.goldGrams) { <span class="text-yellow-700">{{ transaction.goldGrams | number: '1.3-3' }} gr altın</span> }
+                    <span class="transaction-amount">
+                        @if (transaction.amount) { <span>{{ transaction.amount | number: '1.2-2' }} TL</span> } @if (transaction.goldGrams) { <span class="text-yellow-700">{{ transaction.goldGrams | number: '1.3-3' }} gr altın</span> }
+                    </span>
                 </td>
             </tr></ng-template
         ><ng-template #emptymessage

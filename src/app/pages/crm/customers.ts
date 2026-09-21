@@ -49,7 +49,8 @@ interface DebtTransaction {
     selector: 'app-customers',
     standalone: true,
     imports: [CommonModule, FormsModule, ButtonModule, DialogModule, InputNumberModule, InputTextModule, SelectModule, TableModule, TagModule, TextareaModule],
-    templateUrl: './customers.html'
+    templateUrl: './customers.html',
+    styleUrls: ['./customers.scss']
 })
 export class Customers {
     customers: Customer[] = [
@@ -121,6 +122,16 @@ export class Customers {
     }
     get selectedMetalTotal() {
         return this.selectedRepairs.reduce((total, repair) => total + repair.metalTotal, 0);
+    }
+    get selectedCreditUsagePercent() {
+        if (!this.selectedCustomer?.creditLimit) return 0;
+        return Math.min(100, (this.selectedCustomer.debt / this.selectedCustomer.creditLimit) * 100);
+    }
+    get selectedDebtStatus() {
+        if (!this.selectedCustomer) return 'Borç bilgisi yok';
+        if (this.selectedCustomer.debt <= 0 && this.selectedCustomer.goldDebtGrams <= 0) return 'Borç bulunmuyor';
+        if (this.selectedCustomer.creditLimit > 0 && this.selectedCustomer.debt >= this.selectedCustomer.creditLimit) return 'Limit dolu';
+        return 'Açık hesap';
     }
     get selectedDebtTransactions() {
         return this.selectedCustomer ? (this.debtTransactions[this.selectedCustomer.id] ?? []) : [];

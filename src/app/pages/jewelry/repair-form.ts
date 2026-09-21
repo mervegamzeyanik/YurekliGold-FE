@@ -32,74 +32,17 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
             }
 
             .compact-repair-page .repair-group-label {
-                counter-increment: repair-step;
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
                 color: var(--text-color-secondary);
-                font-size: 0.78rem;
+                font-size: 0.8rem;
                 font-weight: 700;
-                letter-spacing: 0.04em;
-                text-transform: uppercase;
                 padding: 0.35rem 0.15rem 0;
-            }
-
-            .compact-repair-page .repair-group-label::before {
-                content: counter(repair-step);
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                flex: 0 0 1.7rem;
-                width: 1.7rem;
-                height: 1.7rem;
-                border: 2px solid var(--primary-color);
-                border-radius: 50%;
-                color: var(--primary-color);
-                background: var(--surface-card);
-                font-size: 0.75rem;
-                font-weight: 700;
-                letter-spacing: 0;
-            }
-
-            .compact-repair-page .repair-group-label::after {
-                content: '';
-                flex: 1;
-                height: 1px;
-                background: var(--surface-border);
             }
 
             .compact-repair-page .repair-group-card {
                 border-top: 2px solid var(--primary-color);
-            }
-
-            .compact-repair-page .repair-stepper {
-                counter-reset: repair-step;
-                position: relative;
-            }
-
-            .compact-repair-page .repair-stepper::before {
-                content: '';
-                position: absolute;
-                top: 1.2rem;
-                bottom: 1.2rem;
-                left: 0.85rem;
-                width: 2px;
-                background: var(--surface-border);
-            }
-
-            .compact-repair-page .repair-stepper > .repair-group-label,
-            .compact-repair-page .repair-stepper > .repair-group-card {
-                position: relative;
-            }
-
-            .compact-repair-page .repair-stepper > .repair-group-label {
-                padding-left: 0;
-            }
-
-            @media (max-width: 1279px) {
-                .compact-repair-page {
-                    max-width: 78rem;
-                }
             }
 
             .compact-repair-page .option-button {
@@ -132,10 +75,6 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
                 min-width: 34rem;
             }
 
-            .compact-repair-page .labor-table {
-                min-width: 52rem;
-            }
-
             .compact-repair-page .selected-list {
                 border: 1px solid var(--surface-border);
                 border-radius: 0.6rem;
@@ -146,7 +85,7 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
             .compact-repair-page .selected-list-row {
                 display: grid;
                 align-items: center;
-                gap: 0.75rem;
+                gap: 0.5rem;
                 padding: 0.55rem 0.75rem;
             }
 
@@ -160,13 +99,18 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
             }
 
             .compact-repair-page .product-row,
-            .compact-repair-page .selected-list-header:not(:has(span:nth-child(4))) {
+            .compact-repair-page .product-selected-list .selected-list-header {
                 grid-template-columns: minmax(0, 1fr) 6.5rem 2.25rem;
             }
 
             .compact-repair-page .labor-row,
             .compact-repair-page .labor-selected-list .selected-list-header {
-                grid-template-columns: minmax(0, 1fr) 6.5rem 8rem 8rem 2.25rem;
+                grid-template-columns: minmax(12rem, 1fr) 7rem 9rem 9rem 2.25rem;
+                min-width: 41.25rem;
+            }
+
+            .compact-repair-page .labor-selected-list {
+                overflow-x: auto;
             }
 
             .compact-repair-page .selected-list-row {
@@ -189,6 +133,51 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
                 min-width: 0;
             }
 
+            .compact-repair-page .quantity-control {
+                display: grid;
+                grid-template-columns: 1.75rem minmax(2rem, 1fr) 1.75rem;
+                align-items: center;
+                width: 6.5rem;
+                overflow: hidden;
+                border: 1px solid var(--surface-border);
+                border-radius: 0.45rem;
+                background: var(--surface-0);
+            }
+
+            .compact-repair-page .quantity-button {
+                height: 2rem;
+                border: 0;
+                color: var(--text-color-secondary);
+                background: var(--surface-50);
+                cursor: pointer;
+                font-size: 1rem;
+                line-height: 1;
+            }
+
+            .compact-repair-page .quantity-button:hover {
+                color: var(--primary-color);
+                background: var(--primary-50);
+            }
+
+            .compact-repair-page .quantity-input {
+                width: 100%;
+                min-width: 0;
+                height: 2rem;
+                padding: 0 0.15rem;
+                border: 0;
+                border-right: 1px solid var(--surface-border);
+                border-left: 1px solid var(--surface-border);
+                border-radius: 0;
+                text-align: center;
+                box-shadow: none;
+            }
+
+            .compact-repair-page .quantity-input::-webkit-inner-spin-button,
+            .compact-repair-page .quantity-input::-webkit-outer-spin-button {
+                margin: 0;
+                appearance: none;
+            }
+
             .compact-repair-page .selected-total {
                 overflow: hidden;
                 text-align: right;
@@ -208,6 +197,7 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
             .compact-repair-page .metal-field {
                 display: inline-flex;
                 width: 100%;
+                min-width: 0;
             }
 
             .compact-repair-page .metal-label {
@@ -215,8 +205,6 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
             }
 
             .compact-repair-page .summary-card {
-                position: sticky;
-                top: 6.5rem;
                 align-self: start;
             }
 
@@ -239,11 +227,6 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
                 justify-content: flex-end;
             }
 
-            @media (max-width: 1279px) {
-                .compact-repair-page .summary-card {
-                    position: static;
-                }
-            }
         `
     ]
 })
@@ -311,6 +294,10 @@ export class RepairForm {
         this.draft.products = this.draft.products.filter((item) => item.name !== product.name);
     }
 
+    changeProductQuantity(product: RepairProduct, amount: number) {
+        product.quantity = Math.max(1, (product.quantity || 1) + amount);
+    }
+
     addLabor(labor: RepairLabor) {
         const item = this.draft.labor.find((selected) => selected.id === labor.id);
         this.draft.labor = item
@@ -320,6 +307,10 @@ export class RepairForm {
 
     removeLabor(labor: RepairLabor) {
         this.draft.labor = this.draft.labor.filter((item) => item.id !== labor.id);
+    }
+
+    changeLaborQuantity(labor: RepairLabor, amount: number) {
+        labor.quantity = Math.max(1, (labor.quantity ?? 1) + amount);
     }
 
     addMetal(type: 'Altın' | 'Gümüş') {

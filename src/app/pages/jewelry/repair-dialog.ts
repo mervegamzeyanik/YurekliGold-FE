@@ -15,41 +15,155 @@ import { RepairLabor, RepairMetal, RepairProduct, RepairRecord, RepairStateServi
     templateUrl: './repair-dialog.html',
     styles: [
         `
-            .repair-dialog .quantity-field {
+            .repair-dialog-content .quantity-field {
                 width: 6rem;
                 min-width: 6rem;
             }
 
-            .repair-dialog .price-field {
+            .repair-dialog-content {
+                min-width: 0;
+            }
+
+            .repair-dialog-content .grid > * {
+                min-width: 0;
+            }
+
+            .repair-dialog-content .price-field {
                 width: 8rem;
                 min-width: 8rem;
             }
 
-            .repair-dialog .selected-table {
-                table-layout: fixed;
-            }
-
-            .repair-dialog .selected-table th:first-child,
-            .repair-dialog .selected-table td:first-child {
+            .repair-dialog-content .selected-list {
+                border: 1px solid var(--surface-border);
+                border-radius: 0.6rem;
                 overflow: hidden;
+            }
+
+            .repair-dialog-content .selected-list-scroll {
+                min-width: 0;
+                overflow-x: auto;
+            }
+
+            .repair-dialog-content .selected-list-header,
+            .repair-dialog-content .selected-list-row {
+                display: grid;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.55rem 0.75rem;
+                box-sizing: border-box;
+            }
+
+            .repair-dialog-content .selected-list-header {
+                color: var(--text-color-secondary);
+                background: var(--surface-50);
+                font-size: 0.72rem;
+                font-weight: 700;
+                letter-spacing: 0.03em;
+                text-transform: uppercase;
+            }
+
+            .repair-dialog-content .product-row,
+            .repair-dialog-content .product-selected-list .selected-list-header {
+                grid-template-columns: minmax(0, 1fr) 6.5rem 2.25rem;
+                min-width: 24rem;
+            }
+
+            .repair-dialog-content .labor-row,
+            .repair-dialog-content .labor-selected-list .selected-list-header {
+                grid-template-columns: minmax(12rem, 1fr) 7rem 9rem 9rem 2.25rem;
+                min-width: 41.25rem;
+            }
+
+            .repair-dialog-content .labor-selected-list {
+                min-width: 41.25rem;
+            }
+
+            .repair-dialog-content .selected-list-row {
+                min-height: 3.25rem;
+                border-top: 1px solid var(--surface-border);
+                background: var(--surface-0);
+            }
+
+            .repair-dialog-content .selected-item-name {
+                min-width: 0;
+                overflow: hidden;
+                font-weight: 600;
                 text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
-            .repair-dialog .selected-table .quantity-column {
-                width: 7rem;
+            .repair-dialog-content .selected-list .quantity-field,
+            .repair-dialog-content .selected-list .price-field {
+                width: 100%;
+                min-width: 0;
             }
 
-            .repair-dialog .selected-table .price-column {
+            .repair-dialog-content .selected-price {
                 width: 9rem;
+                min-width: 9rem;
             }
 
-            .repair-dialog .selected-table .total-column {
-                width: 9rem;
+            .repair-dialog-content .quantity-control {
+                display: grid;
+                grid-template-columns: 1.75rem minmax(2rem, 1fr) 1.75rem;
+                align-items: center;
+                width: 6.5rem;
+                overflow: hidden;
+                border: 1px solid var(--surface-border);
+                border-radius: 0.45rem;
+                background: var(--surface-0);
             }
 
-            .repair-dialog .selected-table .action-column {
-                width: 3rem;
+            .repair-dialog-content .quantity-button {
+                height: 2rem;
+                border: 0;
+                color: var(--text-color-secondary);
+                background: var(--surface-50);
+                cursor: pointer;
+                font-size: 1rem;
+                line-height: 1;
+            }
+
+            .repair-dialog-content .quantity-button:hover {
+                color: var(--primary-color);
+                background: var(--primary-50);
+            }
+
+            .repair-dialog-content .quantity-input {
+                width: 100%;
+                min-width: 0;
+                height: 2rem;
+                padding: 0 0.15rem;
+                border: 0;
+                border-right: 1px solid var(--surface-border);
+                border-left: 1px solid var(--surface-border);
+                border-radius: 0;
                 text-align: center;
+                box-shadow: none;
+            }
+
+            .repair-dialog-content .quantity-input::-webkit-inner-spin-button,
+            .repair-dialog-content .quantity-input::-webkit-outer-spin-button {
+                margin: 0;
+                appearance: none;
+            }
+
+            .repair-dialog-content .selected-total {
+                overflow: hidden;
+                text-align: right;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .repair-dialog-content .selected-list-empty {
+                padding: 1rem;
+                color: var(--text-color-secondary);
+                font-size: 0.85rem;
+                text-align: center;
+            }
+
+            .repair-dialog-content .metal-field {
+                min-width: 0;
             }
         `
     ]
@@ -136,8 +250,20 @@ export class RepairDialog {
         }
     }
 
+    changeProductQuantity(product: RepairProduct, amount: number) {
+        if (this.draft.status !== 'Tamamlandı') {
+            product.quantity = Math.max(1, (product.quantity || 1) + amount);
+        }
+    }
+
     removeLabor(labor: RepairLabor) {
         this.draft.labor = this.draft.labor.filter((item) => item.id !== labor.id);
+    }
+
+    changeLaborQuantity(labor: RepairLabor, amount: number) {
+        if (this.draft.status !== 'Tamamlandı') {
+            labor.quantity = Math.max(1, (labor.quantity ?? 1) + amount);
+        }
     }
 
     addMetal(type: 'Altın' | 'Gümüş') {

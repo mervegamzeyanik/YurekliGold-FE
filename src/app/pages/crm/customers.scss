@@ -1,0 +1,190 @@
+.customer-summary-card {
+    min-height: 5.5rem;
+    border: 1px solid color-mix(in srgb, var(--surface-border) 75%, transparent);
+}
+
+.customer-detail-hero {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--content-border-radius);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--primary-color) 10%, var(--surface-card)), var(--surface-card));
+}
+
+.customer-avatar {
+    display: grid;
+    flex: 0 0 3.5rem;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: var(--primary-contrast-color);
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.customer-hero-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.customer-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    margin-top: 0.7rem;
+    color: var(--text-color-secondary);
+    font-size: 0.85rem;
+}
+
+.customer-hero-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.customer-hero-meta i,
+.customer-info-row i {
+    color: var(--primary-color);
+}
+
+.section-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.credit-limit-box {
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--content-border-radius);
+    background: var(--surface-ground);
+}
+
+.credit-progress {
+    height: 0.5rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--surface-200);
+}
+
+.credit-progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--primary-color);
+    transition: width 0.2s ease;
+}
+
+.customer-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--content-border-radius);
+    background: var(--surface-ground);
+}
+
+.customer-info-row strong {
+    display: block;
+    overflow-wrap: anywhere;
+    font-weight: 500;
+}
+
+.customer-summary-card .summary-value {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 1.15rem;
+    line-height: 1.2;
+}
+
+.customer-contact-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.customer-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    min-width: 0;
+    padding: 0.75rem;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--content-border-radius);
+    background: var(--surface-ground);
+}
+
+.customer-contact-item i {
+    margin-top: 0.15rem;
+    color: var(--primary-color);
+}
+
+.customer-contact-item span {
+    overflow-wrap: anywhere;
+}
+
+.customer-action-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.customer-action-grid p-button {
+    width: 100%;
+}
+
+.customer-action-grid ::ng-deep .p-button {
+    width: 100%;
+    justify-content: center;
+}
+
+.debt-dialog-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.debt-dialog-summary > div {
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--content-border-radius);
+    background: var(--surface-ground);
+}
+
+.transaction-amount {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+}
+
+@media (max-width: 768px) {
+    .customer-detail-hero {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .customer-detail-hero p-button {
+        width: 100%;
+    }
+
+    .customer-detail-hero ::ng-deep .p-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .customer-contact-list,
+    .customer-action-grid,
+    .debt-dialog-summary {
+        grid-template-columns: 1fr;
+    }
+}
